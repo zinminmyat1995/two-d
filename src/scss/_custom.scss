@@ -1,0 +1,454 @@
+// for table
+
+.tableFixHead {
+	overflow-y: auto;
+	max-height: 500px;
+}
+  
+.tableFixHead thead {
+	position: sticky;
+	top: 0;
+	z-index: 3;
+}
+.table tbody tr td {
+	word-break: break-word;
+}
+td:first-child, th:first-child {
+	position:sticky;
+	left:0;
+	z-index:1;
+}
+td:nth-child(2),th:nth-child(2)  { 
+  position:sticky;
+	left:60px;
+	z-index:1;
+}
+td:nth-child(3),th:nth-child(3)  { 
+	position:sticky;
+	  left:220px;
+	  z-index:1;
+}
+// Here you can add other styles
+.text-align-center{
+	text-align: center;
+}
+.text-align-right{
+	text-align: end;
+}
+.login-background-image {
+	background-image: url(/image/login-background.jpg);
+	background-repeat: no-repeat;
+	background-size: cover; /* Default for web */
+	background-position: center;
+	width: 100%;
+	height: 100vh; /* Full height of the viewport */
+}
+
+/* For tablets and smaller screens */
+@media (max-width: 1024px) {
+	.login-background-image {
+		background-size: contain; /* Prevents cropping */
+		background-position: top center;
+	}
+}
+
+/* For mobile screens */
+@media (max-width: 768px) {
+	.login-background-image {
+		background-size: cover; /* Fill the background properly */
+		background-position: center center;
+	}
+}
+
+/* For very small screens */
+@media (max-width: 480px) {
+	.login-background-image {
+		background-size: cover; /* Fill the background properly */
+		background-position: center center;
+	}
+}
+.login-card-design{
+	background: rgb(129 153 151);
+	width: 31%;
+	height: 100vh;
+	background-color: rgb(151 176 173 / 80%);
+	box-shadow: 0px 10px 19px 5px #000;
+}
+
+/* For tablets and smaller screens */
+@media (max-width: 1024px) {
+	.login-card-design {
+		width: 50%; 
+		background-color: rgb(70 75 79 / 16%);
+		box-shadow: 0px 10px 19px 5px #000;
+	}
+}
+
+/* For mobile screens */
+@media (max-width: 768px) {
+	.login-card-design {
+		width: 80%; 
+		background-color: rgb(70 75 79 / 16%);
+		box-shadow: 0px 10px 19px 5px #000;
+	}
+}
+
+.title{
+	text-align: center;
+	font-family: Serif;
+	color: #212631;
+}
+.login-button{
+	background: #2d3236;
+	border-color: #383d41;
+	color: white;
+}
+.login-button:hover{
+	background-color: #e9e7e9   !important;
+}
+.forgot-password-link{
+	color: #212631;
+}
+.label{
+	font-size: 17px;
+}
+.success {
+	color: white;
+	background-color: #6edabc;
+	border: 1px solid #6edabc !important;
+	border-radius: 10px;
+}
+.error {
+	color: white;
+	background-color: #f36d64;
+	border: 1px solid #f78c84 !important;
+	border-radius: 10px;
+}
+.success-error-label{
+	padding-bottom: 5px;
+	padding-left: 20px;
+}
+.width100{
+	width: 100%;
+}
+.total-row{
+	color: #249542;
+	  font-size: 15px;
+	  font-weight: bold;
+
+}
+#overlay {
+	z-index: 2000;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: #adb5bd;
+	opacity: 0.5;
+  }
+  #overlay div {
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	margin: auto;
+  }
+.shapeshifter {
+	animation-duration: 800ms; // 800 ms
+	animation-timing-function: steps(60);
+	width: 140px !important;
+	height: 140px !important;
+	background-repeat: no-repeat;
+	background-position: center;
+  }
+  .shapeshifter.play {
+	animation-name: play60;
+	animation-iteration-count: infinite;
+  }
+  .plus-button{
+	  background: #1d222b;
+	  width: 25px !important;
+	  height: 25px !important;
+	  border-radius: 5px;
+	  border: 1px solid #494c53;
+	  color: #dddedf;
+  }
+  .minus-button{
+	background: #1d222b;
+	width: 25px !important;
+	height: 25px !important;
+	border-radius: 5px;
+	border: 1px solid #494c53;
+	color: #dddedf;
+ }
+
+.container-lg{
+	max-width: 100% !important;
+}
+
+.ng-return-list-table{
+	width: 1670px;
+	min-width: 100% !important;
+}
+.ng-registration-table{
+	width: 1520px;
+	min-width: 100% !important;
+}
+.import-registration-table{
+	width: 1520px;
+	min-width: 100% !important;
+}
+.instock-list-table{
+	width: 1790px;
+	min-width: 100% !important;
+}
+.ng-list-table{
+	width: 1700px;
+	min-width: 100% !important;
+}
+.ng-return-register-table{
+	width: 1710px;
+	min-width: 100% !important;
+}
+.product-list-table{
+	width: 1100px;
+	min-width: 100% !important;
+}
+.ng-detail-information-table{
+	width: 1090px;
+	min-width: 100% !important;
+}
+.ng-arrive-table{
+	width: 1400px;
+	min-width: 100% !important;
+}
+.sale-list-table{
+	width: 1150px;
+	min-width: 100% !important;
+}
+.sale-voucher-table{
+	width: 510px;
+	min-width: 100% !important;
+}
+.user-list-table{
+	width: 1070px;
+	min-width: 100% !important;
+}
+
+.sale-registration-table{
+	width: 1490px;
+	min-width: 100% !important;
+}
+.sale-list-modal-table{
+	width: 1100px;
+	min-width: 100% !important;
+}
+.margin-left-0{
+	margin-left: 0;
+}
+
+.accordion-button{
+	border: var(--cui-border-width) solid var(--cui-border-color);
+	box-shadow: 0px 0px 10px -3px gray;
+	border-radius: 10px !important;
+}
+.accordion-button:focus {
+	box-shadow: 0px 0px 10px -3px gray !important;
+}
+.shpping-list-table-hearder{
+	// background: #22507f;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	font-weight: bold;
+	// border-radius: 5px;
+	// border-bottom: 1px solid #806f6f87;
+}
+.shpping-list-table-body{
+	padding-top: 4px;
+	padding-bottom: 4px;
+	border-bottom: 1px solid #806f6f87;
+}
+.accordion-collapse{
+	box-shadow: 0px 0px 10px -3px gray;
+	border-bottom-left-radius: 10px !important;
+	border-bottom-right-radius: 10px !important;
+}
+.shpping-list-table-total{
+	padding-top: 15px;
+	padding-bottom: 5px;
+}
+.accordion-button:not(.collapsed) {
+	color: unset !important;
+	background-color: unset !important;
+	box-shadow: 0px 0px 10px -3px gray !important;
+}
+.accordion-button:not(.collapsed)::after {
+	background-image: var(--cui-accordion-btn-icon) !important;
+}
+
+.setting-fieldset{
+	box-shadow: 0px 0px 10px -3px gray !important;
+	border-radius: 10px;
+}
+.setting-fieldset-hearder {
+	width: 200px;
+	margin-top: -30px;
+	background: #3399ff;
+	border: 1px solid #c5abff;
+	color: #ffffff;
+	font-weight: bold;
+}
+  
+.form-check-label {
+	margin-left: 10px;
+}
+.form-switch-xl .form-check-input {
+	width: 3em !important;
+}
+.setting-fieldset-hearder:hover {
+	color: black;
+	background-color: #c5abff;
+	border-color: #c5abff;
+}
+.display-flex{
+	display: flex;
+}
+
+.discount-span{
+	vertical-align: text-bottom;
+	margin-left: 10px;
+	font-size: 20px;
+	color: red;
+	font-weight: bold;
+
+}
+
+.discount1-span{
+	vertical-align: text-bottom;
+	margin-left: 10px;
+	font-size: 17px;
+	color: white;
+	font-weight: bold;
+}
+
+.payment-discount-border-bottom-line{
+	border-bottom: 2px solid rgba(128, 111, 111, 0.5294117647);
+}
+.payment-discount-border-bottom-line2{
+	padding-top: 15px;
+	padding-bottom: 15px;
+	border-bottom: 2px solid rgba(128, 111, 111, 0.5294117647);
+	background: black;
+	color: white;
+
+}
+@media screen {
+	.yourClassName {
+		visibility: hidden;
+		display: none;
+	}
+}
+
+// autocomplete  css
+.css-154xyx0-MuiInputBase-root-MuiOutlinedInput-root {
+	color: var(--cui-body-color) !important;
+	height: 38px !important;
+	background-color: var(--cui-body-bg) !important;
+	background-clip: padding-box !important;
+	border: var(--cui-border-width) solid var(--cui-border-color) !important;
+	border-radius: var(--cui-border-radius) !important;
+	transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
+}
+
+.css-i4bv87-MuiSvgIcon-root {
+	display: none !important;
+}
+
+.react-datepicker__input-container input {
+	border: none; /* Remove border from the input field */
+	outline: none; /* Remove focus outline */
+  }
+  
+  /* Optionally, you can add custom styles for the input */
+  .react-datepicker__input-container input {
+	padding: 8px; /* Add some padding */
+	border-radius: 4px; /* Optional: Add rounded corners */
+	background-color: var(--cui-body-bg);
+	border-color: #acabeb;
+	border: var(--cui-border-width) solid var(--cui-border-color);
+  }
+  
+  /* Remove border on the calendar */
+  .react-datepicker {
+	border: none; /* Remove border from the date picker */
+	box-shadow: none; /* Remove any shadow */
+  }
+  
+  /* Optional: Customize the calendar appearance */
+  .react-datepicker__header {
+	background-color: #007bff; /* Change header background color */
+	border-bottom: none; /* Remove bottom border */
+  }
+  
+  .react-datepicker__day--selected,
+  .react-datepicker__day--in-selecting-range,
+  .react-datepicker__day--in-range {
+	background-color: #007bff; /* Change selected day background color */
+	color: white; /* Change selected day text color */
+  }
+  
+  /* Customize the calendar input focus */
+  .react-datepicker__input-container input:focus {
+	box-shadow: 0 0 0 0.25rem rgba(88, 86, 214, 0.25);
+	border-color: #acabeb;
+  }
+  .react-datepicker-popper{
+	z-index: 4 !important;
+  }
+  .bill-sale-card{
+	background: #2a303d;
+	margin-left: 0px;
+	margin-right: 0px;
+	border-radius: 10px;
+  }
+
+.header{
+	background: #212631 !important;
+}
+.header-toggler {
+	color: white !important;
+}
+.center-web-phone{
+	text-align: center;
+}
+
+@media (max-width: 992px) {
+	.sale-voucher-table-3{
+		left: 0 !important;
+		z-index: 0 !important;
+	}
+	.center-web-phone{
+		text-align: left !important;
+	}
+	.center-web-phone-btn{
+		margin-top: 10px;
+	}
+
+}
+
+
+
+.bill-sale-card {
+	color: white !important;
+}
+.bg-body-tertiary{
+	background-color: #2a303d !important;
+	color: white !important;
+}
+
+.dashboard-card{
+	font-size: 13px;
+}
+
