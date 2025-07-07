@@ -36,6 +36,7 @@
     "classnames": "^2.5.1",
     "core-js": "^3.36.1",
     "file-saver": "^2.0.5",
+    "framer-motion": "^12.23.0",
     "interweave": "^13.1.0",
     "laravel-echo": "^2.0.2",
     "process": "^0.11.10",

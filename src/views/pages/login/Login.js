@@ -1,5 +1,5 @@
 import React,{useState,useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { motion, AnimatePresence } from "framer-motion";
 import {
   CButton,
   CCard,
@@ -21,107 +21,121 @@ import Loading from "../../common/Loading"
 import Message from "../../common/SuccessError";
 
 const Login = () => {
-  const navigate = useNavigate();
-  const [error, setError] = useState([]); // for error message
-  const [success, setSuccess] = useState([]); // for success message
-  const [loading, setLoading] = useState(false);  // for loading
-  const [code, setCode] = useState("");
-  const [password, setPassword] = useState("");
+  const [liveData, setLiveData] = useState(null);
+  const [result, setResult] = useState([]);
+  const [live, setLive ] = useState(null);
+  const [ set1, setSet1 ] = useState(null);
+  const [ set2, setSet2 ] = useState(null);
+  const [ value1, setValue1 ] = useState(null);
+  const [ value2, setValue2 ] = useState(null);
+  const [ no1, setNo1 ] = useState(null);
+  const [ no2, setNo2 ] = useState(null);
+
 
   useEffect(() => {
-    (async () => {
-      localStorage.removeItem("LOGIN_ID");
-    })();
+    liveApi();
+
+    const interval = setInterval(() => {
+      liveApi(); // Auto refresh every 30 sec
+    }, 5000);
+
+    return () => clearInterval(interval);
   }, []);
 
-  let loginClick =async ()=>{
-    let str = [];
-    if(code == ""){
-      str.push("Please fill code!")
-    }
+  
 
-    if(password == ""){
-      str.push("Please fill password!")
-    }
-
-    if(str.length > 0){
-      setError(str);
-    }else{
-      setError([]);setLoading(true);
-      let obj = {
-        method: "post",
-        url: ApiPath.Login,
-        params: {
-          "code": code,
-          "password": password,
-        },
-        };
-        let response = await ApiRequest(obj);
+   const liveApi = async () => {
+      // Get current time
+      const now = new Date();
+      const currentHour = now.getHours(); // 0-23 format
       
-        if (response.flag === false) {
-            setLoading(false);
-            setError(response.message);
-        } else {
-        if (response.data.status == "OK") {
-            localStorage.setItem('LOGIN_ID', code);
-            navigate("/dashboard");
-        }else{
-          setError([response.data.message]);setLoading(false);
-          window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
-        } 
-        }
-    }
-    }
-   
+    try {
+      const response = await fetch("https://api.thaistock2d.com/live");
+      if (!response.ok) throw new Error("API error");
+      const data = await response.json();
 
+      setLiveData(data); // keep the whole object too
+      setResult(data.result)
+    
+      setLive(data.live.twod)
+      if (currentHour < 13) {
+        // Before 1 PM
+        setSet1(data.live.set);
+        setValue1(data.live.value);
+        setNo1(data.live.twod);
+      } else {
+        // 1 PM or later
+        setSet2(data.live.set);
+        setValue2(data.live.value);
+        setNo2(data.live.twod);
+      }
+
+    } catch (err) {
+      console.error("Failed to fetch live data:", err);
+    }
+  };
+
+  console.log(result)
   return (
-    <div className="bg-body-tertiary min-vh-100 d-flex flex-row align-items-center login-background-image">
-      <Loading start={loading} />
-      <CContainer>
-        <CRow>
-            <CCol md={5} className='login-card-design'>
-              <CForm style={{marginTop: "50%"}}>
-                  <h1 className='title'>Online Shop</h1>
-                  <div style={{marginLeft: "12px",marginRight: "12px"}}>
-                    <Message success={success} error={error} />
-                  </div>
-                  
-                  {/* <p className="text-body-secondary">Sign In to your account</p> */}
-                  <CInputGroup className="mb-3 mt-3">
-                    <CInputGroupText>
-                      <CIcon icon={cilUser} />
-                    </CInputGroupText>
-                    <CFormInput placeholder="User Code" autoComplete="username"  value={code} onChange={(e)=>setCode(e.target.value)} />
-                  </CInputGroup>
-                  <CInputGroup className="mb-4">
-                    <CInputGroupText>
-                      <CIcon icon={cilLockLocked} />
-                    </CInputGroupText>
-                    <CFormInput
-                      type="password"
-                      placeholder="Password"
-                      autoComplete="current-password"
-                      value={password} onChange={(e)=>setPassword(e.target.value)} 
-                    />
-                  </CInputGroup>
-                  <CRow className='text-align-center'>
-                    <CCol >
-                      <CButton  className="px-4 login-button" onClick={loginClick}>
-                        Login
-                      </CButton>
-                    </CCol>
-                  </CRow>
-                  <CRow className='text-align-center'>
-                    <CCol >
-                      <CButton color="link" className="px-0 forgot-password-link">
-                        Forgot password?
-                      </CButton>
-                    </CCol>
-                  </CRow>
-                </CForm>
-            </CCol>
-        </CRow>
-      </CContainer>
+    <div className="min-vh-100 d-flex justify-content-center align-items-center bg-light px-3">
+      <div className="w-100" style={{ maxWidth: "400px", position: "fixed", top: "0" }}>
+        <div className="bg-primary text-white text-center  py-2 header-color">
+          <h5 className="mb-0 header-text">Thai Stock 2D</h5>
+        </div>
+
+        <div className="bg-white text-center p-3 shadow rounded-bottom">
+           <AnimatePresence mode="wait">
+            <motion.h1
+              key={Date.now()} // <- Key is important for re-render animation
+              className="display-1 fw-bold text-shadow"
+              initial={{ opacity: 0, y: -10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 10, scale: 0.95 }}
+              transition={{ duration: 0.3 }}
+            >
+              {live}
+            </motion.h1>
+          </AnimatePresence>
+
+          <p className="text-muted update-time">
+            <i className="bi bi-clock"></i> Updated: 2025-07-07 10:27:13
+          </p>
+
+          <div className="mt-4">
+            {/* 11:00 AM Section */}
+            <div className="bg-info text-white rounded p-3 mb-3 first-card">
+              <label className='time'>12:00 AM</label>
+              <hr/>
+              <CRow>
+                <CCol style={{fontWeight: "100", fontSize: "15px", fontStyle: "italic"}}>Set</CCol>
+                <CCol style={{fontWeight: "100", fontSize: "15px", fontStyle: "italic"}}>Value</CCol>
+                <CCol style={{fontWeight: "100", fontSize: "15px", fontStyle: "italic"}}>2D</CCol>
+              </CRow>
+              <CRow>
+                <CCol style={{fontWeight: "bold", fontSize: "17px"}}>{result.length>0? (result[1]['set'] == "--" ?set1 : result[1]['set']): "--"}</CCol>
+                <CCol style={{fontWeight: "bold", fontSize: "17px"}}>{result.length>0? (result[1]['value'] == "--" ?value1 : result[1]['value']): "--"}</CCol>
+                <CCol style={{fontWeight: "bold", fontSize: "17px"}}>{result.length>0? result[1]['twod']: "--"}</CCol>
+              </CRow>
+            </div>
+
+            {/* 12:01 PM Section */}
+            <div className="bg-primary text-white rounded p-3 second-card">
+              <label className='time'>04:30 PM</label>
+               <hr/>
+              <CRow>
+                  <CCol style={{fontWeight: "100", fontSize: "15px", fontStyle: "italic"}}>Set</CCol>
+                  <CCol style={{fontWeight: "100", fontSize: "15px", fontStyle: "italic"}}>Value</CCol>
+                  <CCol style={{fontWeight: "100", fontSize: "15px", fontStyle: "italic"}}>2D</CCol>
+                </CRow>
+                <CRow>
+                  <CCol style={{fontWeight: "bold", fontSize: "17px"}}>{result.length>0? (result[3]['set'] == "--" ?set2 : result[3]['set']): "--"}</CCol>
+                  <CCol style={{fontWeight: "bold", fontSize: "17px"}}>{result.length>0? (result[3]['value'] == "--" ?value2 : result[3]['value']): "--"}</CCol>
+                  <CCol style={{fontWeight: "bold", fontSize: "17px"}}>{result.length>0? result[3]['twod']: "--"}</CCol>
+                </CRow>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
