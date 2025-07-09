@@ -75,7 +75,7 @@ const Login = () => {
     }
   };
 
-  console.log(result)
+  console.log(liveData)
   return (
     <div className="min-vh-100 d-flex justify-content-center align-items-center bg-light px-3">
       <div className="w-100" style={{ maxWidth: "400px", position: "fixed", top: "0" }}>
@@ -98,7 +98,7 @@ const Login = () => {
           </AnimatePresence>
 
           <p className="text-muted update-time">
-            <i className="bi bi-clock"></i> Updated: 2025-07-07 10:27:13
+            <i className="bi bi-clock"></i> {liveData != null ? liveData['server_time'] : ""}
           </p>
 
           <div className="mt-4">
@@ -128,8 +128,8 @@ const Login = () => {
                   <CCol style={{fontWeight: "100", fontSize: "15px", fontStyle: "italic"}}>2D</CCol>
                 </CRow>
                 <CRow>
-                  <CCol style={{fontWeight: "bold", fontSize: "17px"}}>{result.length>0? (result[3]['set'] == "--" ?set2 : result[3]['set']): "--"}</CCol>
-                  <CCol style={{fontWeight: "bold", fontSize: "17px"}}>{result.length>0? (result[3]['value'] == "--" ?value2 : result[3]['value']): "--"}</CCol>
+                  <CCol style={{fontWeight: "bold", fontSize: "17px"}}>{result.length>0? (result[3]['set'] == "--" ?result[3]['set'] : set2): "--"}</CCol>
+                  <CCol style={{fontWeight: "bold", fontSize: "17px"}}>{result.length>0? (result[3]['value'] == "--" ?result[3]['value'] : value2 ): "--"}</CCol>
                   <CCol style={{fontWeight: "bold", fontSize: "17px"}}>{result.length>0? result[3]['twod']: "--"}</CCol>
                 </CRow>
             </div>
