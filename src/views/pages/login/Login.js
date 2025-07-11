@@ -30,7 +30,36 @@ const Login = () => {
   const [ value2, setValue2 ] = useState(null);
   const [ no1, setNo1 ] = useState(null);
   const [ no2, setNo2 ] = useState(null);
+  const [icon, setIcon] = useState(null)
+  const [holidayName, setHolidayName ] = useState(null);
 
+  useEffect(() => {
+    const now = new Date()
+    const hours = now.getHours()
+    const minutes = now.getMinutes()
+    const currentTime = hours * 60 + minutes
+
+    const isBefore12_30 = currentTime < 12 * 60 + 30
+    const isBefore13_30 = currentTime < 13 * 60 + 30
+    const isBefore17_00 = currentTime < 17 * 60
+
+    if (result && result.length > 3) {
+      const twod1 = result[1]?.twod
+      const twod3 = result[3]?.twod
+
+      if (isBefore12_30 && twod1 === '--') {
+        setIcon(<i className="bi bi-clock"></i>)
+      } else if (twod1 !== '--' && isBefore13_30) {
+        setIcon(<i className="bi bi-check-circle-fill text-success"></i>)
+      } else if (isBefore17_00 && twod3 === '--') {
+        setIcon(<i className="bi bi-clock"></i>)
+      } else if (!isBefore17_00) {
+        setIcon(<i className="bi bi-check-circle-fill text-success"></i>)
+      } else {
+        setIcon(null)
+      }
+    }
+  }, [liveData, result])
 
   useEffect(() => {
     liveApi();
@@ -84,6 +113,12 @@ const Login = () => {
         </div>
 
         <div className="bg-white text-center p-3 shadow rounded-bottom">
+          {liveData != null && liveData['holiday']['status']== 1 &&
+            <div className='message'> 
+              <span style={{marginLeft: "10px"}}>{liveData != null ? liveData['holiday']['name'] : ""}</span>
+            </div>
+          }
+          
            <AnimatePresence mode="wait">
             <motion.h1
               key={Date.now()} // <- Key is important for re-render animation
@@ -98,7 +133,7 @@ const Login = () => {
           </AnimatePresence>
 
           <p className="text-muted update-time">
-            <i className="bi bi-clock"></i> {liveData != null ? liveData['server_time'] : ""}
+            {icon} Updated: {liveData != null ? liveData['server_time'] : ""}
           </p>
 
           <div className="mt-4">
@@ -128,8 +163,8 @@ const Login = () => {
                   <CCol style={{fontWeight: "100", fontSize: "15px", fontStyle: "italic"}}>2D</CCol>
                 </CRow>
                 <CRow>
-                  <CCol style={{fontWeight: "bold", fontSize: "17px"}}>{result.length>0? (result[3]['set'] == "--" ?result[3]['set'] : set2): "--"}</CCol>
-                  <CCol style={{fontWeight: "bold", fontSize: "17px"}}>{result.length>0? (result[3]['value'] == "--" ?result[3]['value'] : value2 ): "--"}</CCol>
+                  <CCol style={{fontWeight: "bold", fontSize: "17px"}}>{result.length>0? (result[3]['set'] == "--" ? (set2 == null ? "--" : set2) : result[3]['set']): "--"}</CCol>
+                  <CCol style={{fontWeight: "bold", fontSize: "17px"}}>{result.length>0? (result[3]['value'] == "--" ?(value2 == null ? "--" : value2) : result[3]['value'] ): "--"}</CCol>
                   <CCol style={{fontWeight: "bold", fontSize: "17px"}}>{result.length>0? result[3]['twod']: "--"}</CCol>
                 </CRow>
             </div>
