@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{useState,useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
 import {
@@ -18,15 +18,17 @@ import { sygnet } from 'src/assets/brand/sygnet'
 
 // sidebar nav config
 import navigation from '../_nav'
+// import navigation2 from '../_nav2'
 
 const AppSidebar = () => {
   const dispatch = useDispatch()
   const unfoldable = useSelector((state) => state.sidebarUnfoldable)
   const sidebarShow = useSelector((state) => state.sidebarShow)
+  const [loginType, setLoginType ] = useState(localStorage.getItem("LOGIN_TYPE"));
 
   return (
     <CSidebar
-      className="border-end"
+      className="border-end sidebar-3d"
       colorScheme="dark"
       position="fixed"
       unfoldable={unfoldable}
@@ -35,9 +37,12 @@ const AppSidebar = () => {
         dispatch({ type: 'set', sidebarShow: visible })
       }}
     >
-      <CSidebarHeader className="border-bottom">
+      <CSidebarHeader className="">
         <CSidebarBrand to="/">
-          {/* <CIcon customClassName="sidebar-brand-full" icon={logo} height={32} /> */}
+          {loginType == 0 &&
+            <img src="image/sidebar-header.webp" alt="icon" style={{width: "100%"}} />
+          }
+          
           <CIcon customClassName="sidebar-brand-narrow" icon={sygnet} height={32} />
         </CSidebarBrand>
         <CCloseButton
@@ -46,12 +51,8 @@ const AppSidebar = () => {
           onClick={() => dispatch({ type: 'set', sidebarShow: false })}
         />
       </CSidebarHeader>
-      <AppSidebarNav items={navigation} />
-      <CSidebarFooter className="border-top d-none d-lg-flex">
-        <CSidebarToggler
-          onClick={() => dispatch({ type: 'set', sidebarUnfoldable: !unfoldable })}
-        />
-      </CSidebarFooter>
+      {/* <AppSidebarNav items={loginType == 0 ?navigation : navigation2} /> */}
+       <AppSidebarNav items={navigation} />
     </CSidebar>
   )
 }
