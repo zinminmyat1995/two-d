@@ -1,5 +1,5 @@
 body {
-  background-color: var(--cui-tertiary-bg);
+    background-color: #fff !important; 
 }
 
 .wrapper {
@@ -49,6 +49,8 @@ body {
 
 .footer {
   min-height: calc(3rem + 1px);
+  background: #ffffff;
+  border-top: unset !important;
 }
 
 @if $enable-dark-mode {
@@ -77,7 +79,7 @@ body {
     font-size: 14px;
 }
 
-.sidebar-nav .nav-link {
+.nav-link {
     color: #6e6e6e !important;
     font-family: Semi-bold;
 }
@@ -88,10 +90,37 @@ body {
     background: #10B981 !important;
 }
 .sidebar-nav svg.nav-icon {
-    color: #6e6e6e;
+    color: #004d40;
 }
 
 .sidebar-3d {
   border-right: 1px solid transparent !important;
   box-shadow: -5px 0 15px rgba(0,0,0,0.3), -10px 0 30px rgba(0,0,0,0.2) !important;
+}
+.sidebar-nav .nav-icon-bullet {
+    border: var(--cui-sidebar-nav-link-icon-bullet-border-width) solid #6e6e6e !important;
+}
+
+
+.sidebar-nav .nav-group-toggle {
+    color: #004d40 !important;
+    // font-size: 16px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    font-family: var(--cui-body-font-family) !important;
+}
+.sidebar-nav .nav-group-toggle::after {
+    background-color: #004d40 !important;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    box-shadow: 0 0 4px rgba(0,0,0,0.6); /* အနားထူထူ အရိပ်ပေါ်စေ */
+}
+
+.sidebar-header {
+  padding: 0 !important;
+}
+
+.sidebar-nav .nav-link.active .nav-icon-bullet {
+    border: var(--cui-sidebar-nav-link-icon-bullet-border-width) solid #ffffff !important;
 }

@@ -11,8 +11,8 @@ const Confirmation = props => {
             aria-labelledby="VerticallyCenteredExample"
         >
             <CModalBody className="m-body">
-                <CRow className="confirm-header mt-3" alignHorizontal="center">
-                    <p className="modal-p text-center" style={{fontSize: "20px",fontWeight: "bold"}}>{props.content}</p>
+                <CRow className="confirm-header mt-3" alignhorizontal="center">
+                    <p className="modal-p " style={{fontSize: "20px",fontFamily: "monospace"}}>{props.content}</p>
                 </CRow>
                 <CButtonToolbar className="confirm-body mt-4">
                     <CRow className="width100 text-align-right" >

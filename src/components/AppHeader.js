@@ -58,33 +58,7 @@ const AppHeader = () => {
     })
   }, [])
 
-  // useEffect(() => {
-  //   const channel = echo.channel("transactions");
 
-  //   channel.listen("NewTransaction", (event) => {
-  //     let name =
-  //       event.transaction.code == "10001"
-  //         ? "Ko Min"
-  //         : event.transaction.code == "10002"
-  //         ? "Ko Pe"
-  //         : event.transaction.code == "10003"
-  //         ? "Ko Zin"
-  //         : event.transaction.code == "10004"
-  //         ? "Ko Nyi"
-  //         : event.transaction.code == "10005"
-  //         ? "Ko Lynn"
-  //         : "Ko Tahar";
-
-  //     let noti = `${name} exchanged ${event.transaction.amount} USD to ${event.transaction.transaction_amount} MMK by ${event.transaction.pay_rate} rate`;
-
-  //     // Correct way to update state
-  //     setNotifications((prevNotifications) => [...prevNotifications, noti]);
-  //   });
-
-  //   return () => {
-  //     echo.leaveChannel("transactions");
-  //   };
-  // }, []);
 
   return (
     <CHeader position="sticky" className="mb-4 p-0" ref={headerRef}>
