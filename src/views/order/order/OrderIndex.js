@@ -150,7 +150,7 @@ const OrderIndex = () => {
     setMenuData(res ? res.data : []) 
   }
 
-  console.log(selectedMenu)
+  console.log("order List",orderList)
   
    const navLink = (name, icon, badge, indent = false) => {
       return (
@@ -213,12 +213,13 @@ const OrderIndex = () => {
       console.log("order",orderList)
       // orderList update
       setOrderList(prev => {
+         console.log("prev",prev)
         const exists = prev.find(item => item.id === id && item.menu_id == Id);
-        
+       console.log("exists",exists)
         if (exists) {
           // update existing meat
           return prev.map(item =>
-            item.id === id ? { ...item, count: selected.count } : item
+            item.id === id && item.menu_id == Id ? { ...item, count: selected.count } : item
           );
         } else {
           // add new meat
@@ -238,7 +239,7 @@ const OrderIndex = () => {
 
 
   };
-      console.log("sss",orderList)
+
 
   const minusBtn = (Id,id) => {
 
@@ -247,7 +248,7 @@ const OrderIndex = () => {
 
         // menu ထဲမှာ meats update
         const updatedMeats = d.meats.map(meat =>
-          meat.id === id ? { ...meat, count: Math.max(0, meat.count - 1)  } : meat
+          meat.id === id && d.menu_id === Id ? { ...meat, count: Math.max(0, meat.count - 1)  } : meat
         );
 
         return {
@@ -262,7 +263,7 @@ const OrderIndex = () => {
     setOrderList(prev =>
       prev
         .map(item =>
-          item.id === id
+          item.id === id && item.menu_id === Id
             ? { ...item, count: Math.max(0, item.count - 1) }
             : item
         )
@@ -365,23 +366,45 @@ const OrderIndex = () => {
                         menuData.map((item, index) => (
                           <Fragment key={index}>
                             <CCard
-                              key={index}
-                              className="shadow-sm border-0 text-center"
-                              style={{
-                                width: '180px',
-                                cursor: 'pointer',
-                                transition: 'transform 0.2s',
-                              }}
-                              onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
-                              onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-                              onClick={()=>cardClick(item.name)}
-                            >
-                              <CCardBody>
-                                <div className="fw-semibold">{item.name}</div>
-                                <div className=" mt-1" style={{fontFamily: "math",color: "#dc3545"}}>฿{item.price}</div>
-                                
-                              </CCardBody>
-                            </CCard>
+  key={index}
+  className="shadow-sm border-0 text-center d-flex flex-column justify-content-between"
+  style={{
+    width: '180px',
+    height: '120px',
+    cursor: 'pointer',
+    transition: 'transform 0.2s',
+  }}
+  onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+  onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+  onClick={() => cardClick(item.name)}
+>
+  <CCardBody className="d-flex flex-column justify-content-between">
+    <div
+      className="fw-semibold"
+      style={{
+        flexGrow: 1,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '16px',
+      }}
+    >
+      {item.name}
+    </div>
+    <div
+      style={{
+        fontFamily: 'math',
+        color: '#dc3545',
+        fontWeight: '500',
+        fontSize: '15px',
+        marginTop: 'auto',
+      }}
+    >
+      ฿{item.price}
+    </div>
+  </CCardBody>
+</CCard>
+
                             <CModal
                               alignment="center"
                               visible={item.show}
@@ -430,7 +453,7 @@ const OrderIndex = () => {
                                               justifyContent: 'center',
                                               transition: 'all 0.2s',
                                               fontSize: '25px',
-                                              paddingBottom: '9px',
+                                              paddingBottom: '5px',
                                               marginRight: '5px'
                                             }}
                                             onMouseOver={e => e.currentTarget.style.transform = 'scale(1.1)'}
@@ -454,8 +477,8 @@ const OrderIndex = () => {
                                               justifyContent: 'center',
                                               transition: 'all 0.2s',
                                               fontSize: '25px',
-                                              paddingBottom: '9px',
-                                              marginLeft: '5px'
+                                              paddingBottom: '5px',
+                                              marginLeft: '5px',
                                             }}
                                             onMouseOver={e => e.currentTarget.style.transform = 'scale(1.1)'}
                                             onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
