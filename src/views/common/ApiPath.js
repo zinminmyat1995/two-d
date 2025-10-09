@@ -25,6 +25,11 @@ export default {
     SettingTableDelete: `setting/table-delete`,
 
     OrderMenuData: `order/menu-data`,
+    OrderRegister: `order/register`,
+    OrderNotiData: `order/noti-data`,
+    OrderMenuDataByID: `order/menu-data/id`,
+    OrderUpdate: `order/update`,
+
     DashboardAllData: `dashboard/all-data`
    
 };

@@ -124,3 +124,7 @@ body {
 .sidebar-nav .nav-link.active .nav-icon-bullet {
     border: var(--cui-sidebar-nav-link-icon-bullet-border-width) solid #ffffff !important;
 }
+.order-active{
+  background: linear-gradient(135deg, rgb(54 70 91), rgb(0 224 243)) !important;
+  color: white !important;
+}
