@@ -89,7 +89,7 @@ const OrderIndex = () => {
     }, [notiID])
 
     let getMenuDataById =async (notiID)=>{
-        setLoading(true)
+        notiID != ""? setLoading(true) : "";
         let object = {
           url: ApiPath.OrderMenuDataByID,
           method: 'get',
@@ -413,7 +413,7 @@ const OrderIndex = () => {
       };
     }
       let response = await ApiRequest(obj);
-      setLoading(false)
+      
       if (response.flag === false) {
         setLoading(false);
         setShowError(true)
