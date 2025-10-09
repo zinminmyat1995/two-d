@@ -418,7 +418,7 @@ const OrderIndex = () => {
         setLoading(false);
         setShowError(true)
         setErrorText2(response.message[0])
-        setErrorText1("Fail to save!")
+        setErrorText1("Fail to save!");setTimeout(() => setShowError(false), 2000)
       } else {
         if (response.data.status == "OK") {
           setLoading(false)
@@ -429,8 +429,8 @@ const OrderIndex = () => {
           setTimeout(() => setShowSuccess(false), 3000);
           window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
         }else{
-           setErrorText1("Fail to save!");setShowError(true);setErrorText2([response.data.message]);setLoading(false);
-          window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+            setErrorText1("Fail to save!");setShowError(true);setErrorText2([response.data.message]);setLoading(false);
+            window.scrollTo({ top: 0, left: 0, behavior: "smooth" });setTimeout(() => setShowError(false), 2000)
         } 
       }
   }
