@@ -413,7 +413,7 @@ const OrderIndex = () => {
       };
     }
       let response = await ApiRequest(obj);
-      
+      setLoading(false)
       if (response.flag === false) {
         setLoading(false);
         setShowError(true)
