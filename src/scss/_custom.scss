@@ -78,13 +78,13 @@ td:nth-child(3),th:nth-child(3)  {
 	margin-top: -13px;
 }
 .login-button{
-	background: rgb(16 185 129);
-	border-color: rgb(16 185 129);
+	background: #6D8EBF;
+	border-color: #6D8EBF;
 	width: 120px;
 	color: white;
 }
 .login-button:hover{
-	background-color: rgb(111, 190, 164) !important;
+	background-color: #6D8EBF !important;
 }
 .forgot-password-link{
 	color: #212631;
@@ -179,29 +179,33 @@ td:nth-child(3),th:nth-child(3)  {
   z-index: 1;
 }
 .plus-button{
-	background: #10B981 ;
+	background: rgb(109 142 191) ;
 	width: 25px !important;
 	height: 25px !important;
 	border-radius: 5px;
-	border: 1px solid #10B981;
+	border: 1px solid rgb(109 142 191);
 	color: #ffffff;
 }
 .minus-button{
-	background: #10B981 ;
+	background: rgb(109 142 191) ;
 	width: 25px !important;
 	height: 25px !important;
 	border-radius: 5px;
-	border: 1px solid #10B981;
+	border: 1px solid rgb(109 142 191);
 	color: #ffffff;
 }
 
 .bg-body-tertiary{
-	background-color: rgb(16 185 129) !important;
+	background-color: rgb(109 142 191) !important;
     color: white !important;
 }
 
 .menu-list-table{
 	max-width: 1120px;
+	min-width: 100% !important;
+}
+.billing-list-table{
+	max-width: 860px;
 	min-width: 100% !important;
 }
  .tabs-wrap {
@@ -245,7 +249,7 @@ td:nth-child(3),th:nth-child(3)  {
 
 /* Active (selected) tab */
 .tab.active {
-	background: #10b981;
+	background: #6D8EBF;
 	color: #fff;
 	box-shadow: 0 6px 15px rgba(0,0,0,0.25);
 }
@@ -288,9 +292,14 @@ td:nth-child(3),th:nth-child(3)  {
 .setting-fieldset-hearder{
 	width: 200px;
 	margin-top: -30px;
-	background: #10B981;
-	border: 1px solid #10B981;
+	background: #6d8ebf;
+	border: 1px solid #6d8ebf;
 	color: white;
+}
+
+.payment-select{
+	background: #6D8EBF !important;
+	color: white !important;
 }
 
 
@@ -377,11 +386,11 @@ td:nth-child(3),th:nth-child(3)  {
 .form-switch-xl .form-check-input {
 	width: 3em !important;
 }
-.setting-fieldset-hearder:hover {
-	color: black;
-	background-color: #c5abff;
-	border-color: #c5abff;
-}
+// .setting-fieldset-hearder:hover {
+// 	color: black;
+// 	background-color: #c5abff;
+// 	border-color: #c5abff;
+// }
 .display-flex{
 	display: flex;
 }
@@ -481,8 +490,8 @@ td:nth-child(3),th:nth-child(3)  {
 }
 .btn:hover {
 	color: white !important;
-	background-color:  rgb(111, 190, 164) !important;
-	border-color:  rgb(111, 190, 164) !important;
+	background-color:  #9dbae7 !important;
+	border-color:  #9dbae7 !important;
 }
 .not-allow{
 	cursor: not-allowed !important;
@@ -609,10 +618,10 @@ td:nth-child(3),th:nth-child(3)  {
 	display: block;
   }
   .header.header-sticky {
-	background: linear-gradient(90deg,#34D399,#10B981) !important;
+	background: #F6FAFD !important;
 }
 .header-toggler{
-	color: white !important;
+	color: #7797ba !important;
 }
 .white-color{
 	color: white !important;

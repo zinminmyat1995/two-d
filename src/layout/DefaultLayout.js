@@ -3,7 +3,10 @@ import { AppContent, AppSidebar, AppFooter, AppHeader } from '../components/inde
 import { Outlet, useLocation, Navigate } from 'react-router-dom'
 
 const DefaultLayout = () => {
-  const location = useLocation()
+    const token = localStorage.getItem('token')
+    const location = useLocation()
+    if (!token) return <Navigate to="/login" replace state={{ redirectTo: location.pathname + location.search }} />
+
   
 
   // Order Register route စစ်ခြင်း
@@ -12,7 +15,7 @@ const DefaultLayout = () => {
   return (
     <div>
       <AppSidebar />
-        <div className={`wrapper d-flex flex-column min-vh-100 `} style={{ background: `${isOrderRegister ? '#fbfbfb' : ''}`   }}>
+        <div className={`wrapper d-flex flex-column min-vh-100 `} style={{ background: `${isOrderRegister ? 'white' : ''}`   }}>
         <AppHeader />
         <div className="body flex-grow-1">
           <AppContent />

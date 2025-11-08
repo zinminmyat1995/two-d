@@ -5,6 +5,7 @@ import {
   CCol,
   CCardBody ,
   CForm,
+  CFormSwitch ,
   CCardHeader ,
   CFormInput,
   CRow,
@@ -22,6 +23,8 @@ import PlusMeatModal from "./PlusMeatModal"
 import MinusCategoryModal from "./MinusCategoryModal";
 import ApiPath from "../../common/ApiPath";
 import { ApiRequest } from "../../common/ApiRequest";
+import deleteImg from '../../../assets/images/delete.png';
+import addImg from '../../../assets/images/add.png';
 
 const RegistrationIndex = () => {
 	const [error, setError] = useState([]); // for error message
@@ -48,6 +51,8 @@ const RegistrationIndex = () => {
  	const [addMeatType, setAddMeatType ] = useState("");
 	const [meatTypeData, setMeatTypeData ] = useState([]);
 	const [removeMeatID , setRemoveMeatID ] = useState("");
+	const [optionRequired, setOptionRequired ] = useState("1");
+	const [price, setPrice ] = useState("")
 
 
 	useEffect(() => {
@@ -242,6 +247,7 @@ const RegistrationIndex = () => {
 				params: {
 					"menu_id": code,
 					"menu_name": name,
+					"price": price,
 					"menu_type": menuType,
 					"meat_and_price": arr,
 					"login_id": loginID,
@@ -254,7 +260,8 @@ const RegistrationIndex = () => {
 				setError(response.message);
 			  } else {
 				if (response.data.status == "OK") {
-					setSuccess([response.data.message]);setError([]);getMenuType();getMeatType();setName("");setCode("");setMenuType("");setModalStatus("");setLoading(false);
+					setSuccess([response.data.message]);setError([]);getMenuType();getMeatType();setName("");setCode("");setMenuType("");setModalStatus("");setOptionRequired("1")
+					setPrice("");setLoading(false);
 				    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
 				}else{
 					setError([response.data.message]);setSuccess([]);setLoading(false);
@@ -317,16 +324,22 @@ const RegistrationIndex = () => {
 		
 	}
 
+	let priceChange1 = ( val, id ) =>{
+		if(validateIntegerOnly(val) && val != "0"){
+			setPrice(val);
+		}
+		
+	}
 
 
 	let removeMeat = (id)=>{
 		setSuccess([]);setError([]);
-		setRemoveMeatID(id);setType("update");
+		setRemoveMeatID(id);setType("remove");
 		setShow(true);setContent("Are you sure want to remove?");
 		
 	}
 
-	let updateOK =async () =>{
+	let removeOK =async () =>{
 		setLoading(true);setShow(false);
 		let obj = {
 			method: "delete",
@@ -389,7 +402,7 @@ const RegistrationIndex = () => {
 
 	let saveClick = () => {
 		let str = [];let flg = false;
-
+		
 		if (name == "") {
 			str.push("Please fill name!")
 		}
@@ -397,17 +410,21 @@ const RegistrationIndex = () => {
 			str.push("Please select menu type!")
 		}
 		
-		if(meatTypeData.length > 0){
-			meatTypeData.forEach(data=>{
-				if(data.check == true && data.price != ""){
-					flg = true;
-				}
-			})
+		if(optionRequired == "1"){
+		
+			if(meatTypeData.length > 0){
+				meatTypeData.forEach(data=>{
+					if(data.check == true && data.price != ""){
+						flg = true;
+					}
+				})
+			}
+			if (flg == false) {
+				str.push("Please select meat and fill price!")
+			}
 		}
 
-		if (flg == false) {
-			str.push("Please select meat and fill price!")
-		}
+		
 
 		if (str.length > 0) {
 			setError(str);
@@ -416,7 +433,7 @@ const RegistrationIndex = () => {
 		} else {
 			setError([]); setSuccess([]);setType("save");
 			setShow(true);setContent("Are you sure want to save?");
-		}
+			}
 	}
 	
   return (
@@ -424,7 +441,7 @@ const RegistrationIndex = () => {
 		<CCol>
 			<CForm>
 				<Loading start={loading} />
-				<h3>Menu Registration</h3>
+				<h3>Create Menu</h3>
 				<hr/>
 				<Message success={success} error={error} />
                 <Confirmation
@@ -433,7 +450,7 @@ const RegistrationIndex = () => {
                     type={type}
                     saveOK={saveOK}
                     deleteOK={deleteOK}
-					updateOK={updateOK}
+					removeOK={removeOK}
                     okButton={"Ok"}
                     cancel={cancelClick}
                     cancelButton={"Cancel"}
@@ -508,14 +525,16 @@ const RegistrationIndex = () => {
 					<CCol lg="4">
 						<div style={{display: "flex"}}>
 						   <CFormSelect className="mb-3"  style={{width: "87%"}} value={menuType} onChange={(e)=>menuTypeChange(e)}>
-						   	<option  value=""></option>
-								{menuTypeData.length> 0 &&
-									menuTypeData.map((data,ind)=>{
-										return(
-											<option value={data.id} key={ind}>{data.name}</option>
-										)
-									})
-								}
+						   <option value=""></option>
+							{menuTypeData.length > 0 &&
+								menuTypeData
+									.filter((data) => data.id !== 1) // ✅ id = 1 မဟုတ်တာတွေကိုပဲ
+									.map((data, ind) => (
+									<option value={data.id} key={ind}>
+										{data.name}
+									</option>
+									))
+							}
 						</CFormSelect>
 						   <CIcon icon={cilPlus} className="plus-button" style={{marginLeft: "10px", marginRight: "10px"}} onClick={()=>plusModalShowFun()}  /> 
 						   <CIcon icon={cilMinus} className="plus-button" onClick={()=>minusModalShowFun()}   />
@@ -524,140 +543,166 @@ const RegistrationIndex = () => {
 					<CCol lg="4"></CCol>
 				</CRow>
 
+				<CRow className="mt-3">
+					<CCol lg="2"></CCol>
+					<CCol lg="2" className="text-align-center">
+							<p className="label">Require Menu Options</p>
+					</CCol>
+					<CCol lg="4">
+						<CFormSwitch
+							size="lg"
+							id="formSwitchCheckDefaultXL"
+							checked={optionRequired == "1"}
+							onChange={(e) => setOptionRequired(e.target.checked ? "1" : "0")}
+						/>
+					</CCol>
+					<CCol lg="4"></CCol>
+				</CRow>
 
-		
+				{optionRequired == "0" &&
+					<CRow className="mt-3">
+						<CCol lg="2"></CCol>
+						<CCol lg="2" className="text-align-center">
+								<p className="label">Price</p>
+						</CCol>
+						<CCol lg="4">
+							<CFormInput type="text"   aria-label="sm input example" value={price}  onChange={(e)=>priceChange1(e.target.value)} />
+						</CCol>
+						<CCol lg="4"></CCol>
+					</CRow>
+
+				}
+				
+				{optionRequired == "1"?  (
+					<CRow className="mt-3">
+						<CCol lg="2"></CCol>
+						<CCol lg="8">
+							<CCard className="shadow-lg border-0 rounded-3">
+								<CCardHeader className="bg-white">
+								<CRow>
+										<CCol className="d-flex align-items-center">
+											<h5 style={{ fontFamily: "serif", marginTop:"4px", marginRight: "4px" }}>Menu Options & Pricing</h5>
+
+											<img src={addImg} alt="Girl Headphones" width={"30"}
+												onMouseOver={e => e.currentTarget.style.transform = 'scale(1.1)'}
+												onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
+												onClick={() => plusMeatModalShowFun()}
+											/>
+											
+										</CCol>
+									</CRow>
+								</CCardHeader>
+								{meatTypeData.length > 0 && (
+									<>
+										<CCardBody>
+																	
+											<>
+												<CRow className="">
+												<CCol>
+													<div className="table-responsive tableFixHead">
+													{/* ⬇️ အစောင့်အစပ်မရှိ အဲ့ထဲက table code အ 그대로 ထားပေးထားတယ် */}
+													<table className="table  ng-return-list-table align-middle">
+														<thead className="text-center">
+														<tr>
+															<th
+															className="bg-body-tertiary"
+															style={{ verticalAlign: "middle" }}
+															width="60px"
+															></th>
+															<th
+															className="bg-body-tertiary"
+															style={{ verticalAlign: "middle" }}
+															width="180px"
+															>
+															Name
+															</th>
+															<th
+															className="bg-body-tertiary"
+															style={{ verticalAlign: "middle" }}
+															width="180px"
+															>
+															Price
+															</th>
+															<th
+															className="bg-body-tertiary"
+															style={{ verticalAlign: "middle" }}
+															width="120px"
+															>
+															Action
+															</th>
+														</tr>
+														</thead>
+														<tbody className="text-center">
+														{meatTypeData.map((data, index) => (
+															<tr key={index}>
+															<td>
+																<input
+																type="checkbox"
+																style={{ width: "14px", height: "14px" }}
+																value={data.id}
+																checked={data.check === true}
+																onChange={() => checkboxChange(data.id)}
+																/>
+															</td>
+															<td>
+																<label style={{ marginLeft: "5px" }}>
+																{data.name}
+																</label>
+															</td>
+															<td>
+																<CFormInput
+																type="text"
+																aria-label="sm input example"
+																value={data.price}
+																onChange={(e) =>
+																	priceChange(e.target.value, data.id)
+																}
+																/>
+															</td>
+															<td>
+																<img src={deleteImg} alt="Girl Headphones" width={"30"} 
+																	onMouseOver={e => e.currentTarget.style.transform = 'scale(1.1)'}
+																	onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
+																	onClick={() => removeMeat(data.id)}
+																/>
+															</td>
+															</tr>
+														))}
+														</tbody>
+													</table>
+													</div>
+												</CCol>
+												</CRow>
+											</>
+										
+										</CCardBody>
+										<CCardFooter className="bg-white text-center mb-3" style={{borderTop: "none"}}>
+											<CButton
+											className="login-button"
+											onClick={() => saveClick()}
+											style={{ width: "100px" }}
+											color="primary"
+											>
+											Save
+											</CButton>
+										</CCardFooter>
+									</>
+								
+								)}
+							</CCard>
+						</CCol>
+						<CCol lg="2"></CCol>
+					</CRow>
+				): 
+				(
+					<CRow className="mt-5 mb-5 text-align-center">
+						<CCol>
+							<CButton className="login-button" style={{ width: "100px" }} onClick={() => saveClick()}>Save</CButton>
+						</CCol>
+					</CRow>
+				)}
                 
-            {meatTypeData.length > 0 && (
-                <CRow className="mt-3">
-                    <CCol lg="2"></CCol>
-                    <CCol lg="8">
-                        <CCard className="shadow-lg border-0 rounded-3">
-                            <CCardHeader className="bg-white">
-                               <CRow>
-                                    <CCol className="d-flex align-items-center">
-                                        <h5 style={{ fontFamily: "serif", marginTop:"4px" }}>Meat & Price</h5>
-                                        <CIcon
-                                            icon={cilPlus}
-                                            className="plus-button ms-2"
-                                            style={{
-                                                cursor: "pointer",
-                                                backgroundColor: "#38b2ac",
-                                                borderRadius: "50%",
-                                                padding: "5px",
-                                                color: "white",
-                                            }}
-                                            title="Add Meat"
-                                            onClick={() => plusMeatModalShowFun()}
-                                        />
-                                    </CCol>
-                                </CRow>
-                            </CCardHeader>
-                            <CCardBody>
-                                
-                                <>
-                                    <CRow className="">
-                                    <CCol>
-                                        <div className="table-responsive tableFixHead">
-                                        {/* ⬇️ အစောင့်အစပ်မရှိ အဲ့ထဲက table code အ 그대로 ထားပေးထားတယ် */}
-                                        <table className="table  ng-return-list-table align-middle">
-                                            <thead className="text-center">
-                                            <tr>
-                                                <th
-                                                className="bg-body-tertiary"
-                                                style={{ verticalAlign: "middle" }}
-                                                width="60px"
-                                                ></th>
-                                                <th
-                                                className="bg-body-tertiary"
-                                                style={{ verticalAlign: "middle" }}
-                                                width="180px"
-                                                >
-                                                Name
-                                                </th>
-                                                <th
-                                                className="bg-body-tertiary"
-                                                style={{ verticalAlign: "middle" }}
-                                                width="180px"
-                                                >
-                                                Price
-                                                </th>
-                                                <th
-                                                className="bg-body-tertiary"
-                                                style={{ verticalAlign: "middle" }}
-                                                width="120px"
-                                                >
-                                                Action
-                                                </th>
-                                            </tr>
-                                            </thead>
-                                            <tbody className="text-center">
-                                            {meatTypeData.map((data, index) => (
-                                                <tr key={index}>
-                                                <td>
-                                                    <input
-                                                    type="checkbox"
-                                                    style={{ width: "14px", height: "14px" }}
-                                                    value={data.id}
-                                                    checked={data.check === true}
-                                                    onChange={() => checkboxChange(data.id)}
-                                                    />
-                                                </td>
-                                                <td>
-                                                    <label style={{ marginLeft: "5px" }}>
-                                                    {data.name}
-                                                    </label>
-                                                </td>
-                                                <td>
-                                                    <CFormInput
-                                                    type="text"
-                                                    aria-label="sm input example"
-                                                    value={data.price}
-                                                    onChange={(e) =>
-                                                        priceChange(e.target.value, data.id)
-                                                    }
-                                                    />
-                                                </td>
-                                                <td>
-                                                    <CIcon
-                                                    icon={cilMinus}
-                                                    className="plus-button"
-                                                    style={{
-                                                        cursor: "pointer",
-                                                        backgroundColor: "#e53e3e",
-                                                        borderRadius: "50%",
-                                                        padding: "5px",
-                                                        color: "white",
-                                                        borderColor: "#e53e3e",
-                                                    }}
-                                                    title="Delete"
-                                                    onClick={() => removeMeat(data.id)}
-                                                    />
-                                                </td>
-                                                </tr>
-                                            ))}
-                                            </tbody>
-                                        </table>
-                                        </div>
-                                    </CCol>
-                                    </CRow>
-                                </>
-                                
-                            </CCardBody>
-                            <CCardFooter className="bg-white text-center mb-3" style={{borderTop: "none"}}>
-                                <CButton
-                                className="login-button"
-                                onClick={() => saveClick()}
-                                style={{ width: "100px" }}
-                                color="primary"
-                                >
-                                Save
-                                </CButton>
-                            </CCardFooter>
-                        </CCard>
-                    </CCol>
-                    <CCol lg="2"></CCol>
-                </CRow>
-            )}
+            
 
 			  </CForm>
 		</CCol>

@@ -66,12 +66,12 @@ body {
 }
 
 .sidebar-nav .nav-link.active {
-    background: #10B981 !important;
+    background: rgb(109 142 191) !important;
     color: white !important;
 }
 
 .sidebar{
-  background: #ECFDF5 !important;
+  background: #DDEAF5 !important;
 }
 
 .sidebar-nav .nav-title {
@@ -87,7 +87,7 @@ body {
 .sidebar-nav .nav-link:hover {
     color: white !important;
     text-decoration: none !important;
-    background: #10B981 !important;
+    background: #9DB8D3 !important;
 }
 .sidebar-nav svg.nav-icon {
     color: #004d40;
@@ -103,11 +103,10 @@ body {
 
 
 .sidebar-nav .nav-group-toggle {
-    color: #004d40 !important;
+    color: #2C3E50 !important;
     // font-size: 16px !important;
     font-weight: 700 !important;
-    text-transform: uppercase !important;
-    font-family: var(--cui-body-font-family) !important;
+   
 }
 .sidebar-nav .nav-group-toggle::after {
     background-color: #004d40 !important;

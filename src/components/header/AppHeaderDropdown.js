@@ -1,44 +1,42 @@
-import React, { useState, useEffect } from "react";
+// src/components/header/AppHeaderDropdown.jsx
+import React, { useState } from 'react'
 import {
-  CAvatar,
-  CBadge,
-  CDropdown,
-  CDropdownDivider,
-  CDropdownHeader,
-  CDropdownItem,
-  CDropdownMenu,
-  CDropdownToggle,
+  CDropdown, CDropdownDivider, CDropdownHeader,
+  CDropdownItem, CDropdownMenu, CDropdownToggle
 } from '@coreui/react'
-import {
-  cilBell,
-  cilCreditCard,
-  cilCommentSquare,
-  cilEnvelopeOpen,
-  cilFile,
-  cilLockLocked,
-  cilAccountLogout,
-  cilUser,
-} from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
-
-import avatar8 from './../../assets/images/avatars/8.jpg'
+import { cilAccountLogout, cilUser } from '@coreui/icons'
+import { useAuth } from '../../auth/AuthContext'   // path ကိုစစ်ပါ: ./../../auth/AuthContext
 
 const AppHeaderDropdown = () => {
-  const [name , setName ] = useState(localStorage.getItem('NAME'));
+  const [name] = useState(localStorage.getItem('NAME'))
+  const { logout } = useAuth()
+
+  const handleLogout = async (e) => {
+    e?.preventDefault()
+    e?.stopPropagation()
+    console.log('[AppHeaderDropdown] logout clicked')  // DEBUG
+    await logout()
+  }
 
   return (
     <CDropdown variant="nav-item">
-      <CDropdownToggle placement="bottom-end" className="py-0 pe-0" caret={false}>
-        <CIcon icon={cilUser} className="me-2 mt-2" style={{color: "white"}} />
+      <CDropdownToggle placement="bottom-end" className="py-0 pe-0 mb-1" caret={false}>
+        <CIcon icon={cilUser} className="me-2 mt-2" style={{ color: '#3c658c' }} />
       </CDropdownToggle>
+
       <CDropdownMenu className="pt-0" placement="bottom-end">
         <CDropdownHeader className="bg-body-secondary fw-semibold my-2">Profile</CDropdownHeader>
-        {/* <CDropdownItem href="#">
+
+        <CDropdownItem disabled>
           <CIcon icon={cilUser} className="me-2" />
-            {name}
-        </CDropdownItem> */}
+          {name || 'Admin'}
+        </CDropdownItem>
+
         <CDropdownDivider />
-        <CDropdownItem href="/login">
+
+        {/* ✅ MOST IMPORTANT: render as button (no href) */}
+        <CDropdownItem component="button" type="button" onClick={handleLogout}>
           <CIcon icon={cilAccountLogout} className="me-2" />
           Logout
         </CDropdownItem>

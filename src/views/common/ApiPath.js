@@ -11,6 +11,13 @@ export default {
     MenuSearch: `menu/search`,
     MenuUpdate: `menu/update`,
     MenuDelete: `menu/delete`,
+    DailyMenuRegister: `daily-menu/save`,
+    DailyMenuSearch: `daily-menu/search`,
+    DailyMenuUpdate: `daily-menu/update`,
+    DailyMenuDelete: `daily-menu/delete`,
+    DailyMenuActive: `daily-menu/active`,
+    DailyMenuInactive: `daily-menu/inactive`,
+    
 
     StoreRegister: `store/register`,
     StoreAmountRegister: `store/amount-register`,
@@ -23,6 +30,9 @@ export default {
     SettingTableSave: `setting/table-save`,
     SettingTableSearch: `setting/table-search`,
     SettingTableDelete: `setting/table-delete`,
+    SettingGetData: `setting/tax-discount-data`,
+    SettingTaxSave: `setting/tax-save`,
+    SettingDiscountSave: `setting/discount-save`,
 
     OrderMenuData: `order/menu-data`,
     OrderRegister: `order/register`,
@@ -30,6 +40,14 @@ export default {
     OrderMenuDataByID: `order/menu-data/id`,
     OrderUpdate: `order/update`,
 
-    DashboardAllData: `dashboard/all-data`
+    BillingGetData: `billing/getData`,
+    BillingPayment: `billing/payment`,
+
+    BillingSearch: `billing/search`,
+    BillingSearchId: `billing/search/id`,
+
+    DashboardAllData: `dashboard/all-data`,
+    
+    
    
 };

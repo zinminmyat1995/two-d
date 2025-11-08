@@ -1,113 +1,112 @@
 import React from 'react'
 import CIcon from '@coreui/icons-react'
 import {
-  cilBell,
-  cilCalculator,
-  cilChartPie,
-  cilCursor,
-  cilDescription,
-  cilDrop,
-  cilNotes,
-  cilPuzzle,
-  cilSpeedometer,
-  cilMemory,
-  cilUser,
-  cilApps,
-  cibMicrosoft,
-  cilCart,
-  cilXCircle,
-  cilSettings,
   cilHome,
-  cilHistory
+  cilClipboard,
+  cilCash,
+  cilFile,
+  cilStorage,
+  cilFastfood,
+  cilUserPlus,
+  cilUser,
+  cilLockLocked,
+  cilSettings,
+  cilHistory,
+  cilBasket ,
 } from '@coreui/icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 
 const _nav = [
-   {
+  // 🏠 Dashboard
+  {
     component: CNavGroup,
-    name: 'Home',
-    to: '/home',
-    icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
+    name: 'Dashboard',
+    to: '/dashboard',
+    icon: <CIcon icon={cilHome} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
-        name: 'Dashboard',
+        name: 'Overview',
         to: '/dashboard',
       },
     ],
   },
 
-  
+  // 💳 Billing Section
   {
     component: CNavGroup,
-    name: 'Sale',
-    to: '/sale',
-    icon: <CIcon icon={cilCart} customClassName="nav-icon" />,
+    name: 'Billing & Orders',
+    to: '/billing',
+    icon: <CIcon icon={cilCash} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
-        name: 'Registration',
-        to: '/sale/registration',
+        name: 'Settle Payment',
+        to: '/billing/register',
       },
       {
         component: CNavItem,
-        name: 'List',
-        to: '/sale/list',
+        name: 'Order List',
+        to: '/billing/list',
       },
-    ],
-  },
- 
-  {
-    component: CNavGroup,
-    name: 'Store',
-    to: '/store',
-    icon: <CIcon icon={cilHome} customClassName="nav-icon" />,
-    items: [
-      {
-        component: CNavItem,
-        name: 'Raw Material',
-        to: '/store/raw-material',
-      }
     ],
   },
 
- 
+  // 🏪 Store Section
   {
     component: CNavGroup,
-    name: 'Menu',
-    to: '/menu',
-    icon: <CIcon icon={cibMicrosoft} customClassName="nav-icon" />,
+    name: 'Inventory',
+    to: '/store',
+    icon: <CIcon icon={cilBasket } customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
-        name: 'Registration',
+        name: 'Raw Materials',
+        to: '/store/raw-material',
+      },
+    ],
+  },
+
+  // 🍽 Menu Section
+  {
+    component: CNavGroup,
+    name: 'Menu Management',
+    to: '/menu',
+    icon: <CIcon icon={cilFastfood} customClassName="nav-icon" />,
+    items: [
+      {
+        component: CNavItem,
+        name: 'Create Menu',
         to: '/menu/register',
       },
       {
         component: CNavItem,
-        name: 'List',
-        to: '/menu/List',
-      }
+        name: 'Menu List',
+        to: '/menu/list',
+      },
+      {
+        component: CNavItem,
+        name: 'Daily Menu Plan',     
+        to: '/menu/daily-plan',
+      },
     ],
   },
-  
 
-
+  // 👤 User Management
   {
     component: CNavGroup,
-    name: 'User',
+    name: 'User Management',
     to: '/user',
     icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
-        name: 'Registration',
+        name: 'Add New User',
         to: '/user/register',
-       
       },
       {
         component: CNavItem,
-        name: 'List',
+        name: 'User List',
         to: '/user/list',
       },
       {
@@ -118,45 +117,46 @@ const _nav = [
     ],
   },
 
- {
+  // ⚙️ Settings
+  {
     component: CNavGroup,
-    name: 'Setting',
+    name: 'System Settings',
     to: '/setting',
     icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
-        name: 'Setting',
+        name: 'General Settings',
         to: '/setting',
-       
-      }
+      },
     ],
   },
 
+  // 🕑 Activity Log
   {
     component: CNavGroup,
-    name: 'History',
+    name: 'Activity Logs',
     to: '/history',
     icon: <CIcon icon={cilHistory} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
-        name: 'History',
+        name: 'Action History',
         to: '/history',
-       
-      }
+      },
     ],
   },
-  
+
+  // 💾 Storage
   {
     component: CNavTitle,
     name: 'Storage',
   },
   {
     component: CNavItem,
-    name: 'Database Storage',
+    name: 'Database Usage',
     to: '/storage',
-    icon: <CIcon icon={cilMemory} customClassName="nav-icon" />,
+    icon: <CIcon icon={cilStorage} customClassName="nav-icon" />,
   },
 ]
 

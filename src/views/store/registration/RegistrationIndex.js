@@ -261,7 +261,7 @@ const RegistrationTabs = () => {
     <CRow>
       <CCol>
         <CForm>
-          <h3>Store Registration</h3>
+          <h3>Raw Materials</h3>
           <hr />
           <Loading start={loading} />
             <Confirmation

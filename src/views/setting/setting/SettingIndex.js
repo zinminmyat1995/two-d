@@ -52,11 +52,11 @@ const SettingIndex = () => {
 	
 	const [minusModalShow, setMinusModalShow ] = useState(false);
 	const [minusModalShow1, setMinusModalShow1 ] = useState(false);
+	const [tax, setTax ] = useState("");
+	const [discount, setDiscount] = useState("");
 
 
 
-
-	const [discount, setDiscount] = useState(false);
 	const [discountPercent, setDiscountPercent ] = useState("");
 	
 	
@@ -70,12 +70,13 @@ const SettingIndex = () => {
 			if(localStorage.getItem("LOGIN_ID") == undefined){
 				window.location.href="/login";
 			}
-			// setLoading(true);
+			setLoading(true);
+			await getSettingData();
 			await getPayment();
 			await getTable();
+			
 
-
-			// await getDiscount();
+			
 			
 			// await getDelivery();
 			// await getPrint();
@@ -97,7 +98,6 @@ const SettingIndex = () => {
 			setError([]); setSuccess([]); setLoading(false);
 		} else {
 			if (response.data.status === 'OK') {
-				setLoading(false);
 				setPaymentData(response.data.data);
 			} else {
 				setError([response.data.message]); setSuccess([]);
@@ -123,6 +123,30 @@ const SettingIndex = () => {
 			if (response.data.status === 'OK') {
 				setLoading(false);
 				setTableData(response.data.data);
+			} else {
+				setError([response.data.message]); setSuccess([]);
+				window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+			}
+		}
+		
+	}
+
+	let getSettingData =async () => {
+		let object = {
+			url: ApiPath.SettingGetData,
+			method: 'get',
+			params: {
+				"login_id": loginID
+			}
+		}
+	
+		let response = await ApiRequest(object);
+		if (response.flag === false) {
+			setError([]); setSuccess([]); setLoading(false);
+		} else {
+			if (response.data.status === 'OK') {
+				setTax(response.data.data[0]['tax']);
+				setDiscount(response.data.data[0]['discount']);
 			} else {
 				setError([response.data.message]); setSuccess([]);
 				window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
@@ -159,7 +183,7 @@ const SettingIndex = () => {
 		  if (response.flag === false) {
 			setSuccess([]);setLoading(false);
 			if(status == "payment-add" || status == "table-add"){
-				setErrorPlus([response.data.data.message]);
+				setErrorPlus([response.data.data.message]);setLoading(false);
 			}else{
 				setError([response.data.data.message]);
 				window.scrollTo({ top: 0, left: 0, behavior: "smooth" });setLoading(false);
@@ -175,7 +199,7 @@ const SettingIndex = () => {
 			  setError([]);clear();setStatus("");
 			}else{
 				if(status == "payment-add" || status == "table-add"){
-					setErrorPlus([response.data.message]);
+					setErrorPlus([response.data.message]);setLoading(false);
 				}else{
 					setError([response.data.message]);
 					window.scrollTo({ top: 0, left: 0, behavior: "smooth" });setLoading(false);setStatus("");
@@ -323,11 +347,109 @@ const SettingIndex = () => {
 		}
 	}
 
-
-	
-
 	let cancelClick2 = ()=>{
 		setMinusModalShow(false);setErrorMinus([]);setSuccessMinus([]);setMinusModalShow1(false);
+	}
+
+	let taxChange = (e) => {
+		let val = e.target.value;
+
+		if (validateIntegerOnly(val)) {
+			let normalized = val.replace(/^0+(\d)/, '$1');
+			if (normalized !== "00" && Number(normalized) < 101) {
+				setTax(normalized);
+			}
+		}
+	};
+
+	let saveTaxBtn = ()=>{
+		let str = [];
+		setLoading(true);
+		if (tax === "") {
+			str.push("Please fill tax percent!")
+		}
+	
+		if (str.length > 0) {
+			setError(str);
+			setSuccess([]);setLoading(false);
+			window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+		} else {
+			setError([]); setSuccess([]);
+			setStatus("tax");setType("owsave");setLoading(false)
+			setShow(true);setContent("Are you sure want to save for tax setting?");
+		}
+	}
+
+	let discountChange = (e) =>{
+		let val = e.target.value;
+
+		if (validateIntegerOnly(val)) {
+			let normalized = val.replace(/^0+(\d)/, '$1');
+			if (normalized !== "00" && Number(normalized) < 101) {
+				setDiscount(normalized);
+			}
+		}
+	}
+
+	let saveDiscountBtn = () =>{
+		let str = [];
+		setLoading(true);
+		if (discount === "") {
+			str.push("Please fill discount percent!")
+		}
+	
+		if (str.length > 0) {
+			setError(str);
+			setSuccess([]);setLoading(false);
+			window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+		} else {
+			setError([]); setSuccess([]);
+			setStatus("discount");setType("owsave");setLoading(false)
+			setShow(true);setContent("Are you sure want to save for discount setting?");
+		}
+	}
+
+	let owsaveOK =async ()=>{
+		setError([]);setSuccess([]);setShow(false);setLoading(true);
+		let obj = ""; let response = "";
+		if(status == "tax"){
+			obj = {
+				method: "post",
+				url: ApiPath.SettingTaxSave,
+				params: {
+					"login_id": loginID,
+					"tax": tax
+				},
+			  };
+			response = await ApiRequest(obj);
+		}else if(status == "discount"){
+			obj = {
+				method: "post",
+				url: ApiPath.SettingDiscountSave,
+				params: {
+					"login_id": loginID,
+					"discount": discount
+				},
+			};
+			response = await ApiRequest(obj);
+		}
+
+		  if (response.flag === false) {
+			setSuccess([]);
+			setError([response.data.data.message]);
+			window.scrollTo({ top: 0, left: 0, behavior: "smooth" });setLoading(false);
+		  } else {
+			if (response.data.status == "OK") {
+				setSuccess([response.data.message]);
+				window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+			  	setError([]);clear();setStatus("");getSettingData();setLoading(false);
+			}else{
+				setError([response.data.message]);
+				window.scrollTo({ top: 0, left: 0, behavior: "smooth" });setLoading(false);setStatus("");
+				setSuccess([]);setLoading(false);
+			} 
+		  }
+		
 	}
 
   return (
@@ -345,6 +467,7 @@ const SettingIndex = () => {
 					saveOK={saveOK}
 					deleteOK={deleteOK}
 					okButton={"Ok"}
+					owsaveOK={owsaveOK}
 					cancel={cancelClick}
 					cancelButton={"Cancel"}
 				/>
@@ -400,7 +523,7 @@ const SettingIndex = () => {
 				
 				<CRow className="mt-5 setting-fieldset">
 					<CCol lg="2" className="text-align-center">
-						<CButton className="setting-fieldset-hearder">Payment Setting</CButton>
+						<CButton className="setting-fieldset-hearder">Payment Options</CButton>
 					</CCol>
 					<CRow className="mt-5 mb-5">
 						<CCol lg="1"></CCol>
@@ -428,7 +551,7 @@ const SettingIndex = () => {
 
 				<CRow className="mt-5 setting-fieldset mb-5">
 					<CCol lg="2" className="text-align-center">
-						<CButton className="setting-fieldset-hearder">Table Setting</CButton>
+						<CButton className="setting-fieldset-hearder">Table Configuration</CButton>
 					</CCol>
 					<CRow className="mt-5 mb-5">
 						<CCol lg="1"></CCol>
@@ -453,7 +576,43 @@ const SettingIndex = () => {
 					</CRow>
 				</CRow>
 
+				<CRow className="mt-5 setting-fieldset mb-5">
+					<CCol lg="2" className="text-align-center">
+						<CButton className="setting-fieldset-hearder">Tax Configuration</CButton>
+					</CCol>
+					<CRow className="mt-5 mb-5">
+						<CCol lg="1"></CCol>
+							<CCol lg="2" className="text-align-center">
+									<p className="label">Tax Percent (%)</p>
+							</CCol>
+							<CCol lg="2">
+								<CFormInput type="text"   aria-label="sm input example" value={tax} onChange={taxChange} />
+							</CCol>
+							<CCol lg="2" className="">
+									<CButton className="login-button" style={{ width: "100px" }} onClick={() => saveTaxBtn()}>Save</CButton>
+							</CCol>
+							
+					</CRow>
+				</CRow>
 
+				<CRow className="mt-5 setting-fieldset mb-5">
+					<CCol lg="2" className="text-align-center">
+						<CButton className="setting-fieldset-hearder">Discount Configuration</CButton>
+					</CCol>
+					<CRow className="mt-5 mb-5">
+						<CCol lg="1"></CCol>
+							<CCol lg="2" className="text-align-center">
+									<p className="label">Discount Percent (%)</p>
+							</CCol>
+							<CCol lg="2">
+								<CFormInput type="text"   aria-label="sm input example" value={discount} onChange={discountChange} />
+							</CCol>
+							<CCol lg="2" className="">
+									<CButton className="login-button" style={{ width: "100px" }} onClick={() => saveDiscountBtn()}>Save</CButton>
+							</CCol>
+							
+					</CRow>
+				</CRow>
 
 
 

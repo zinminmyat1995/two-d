@@ -29,8 +29,21 @@ const PlusMeatModal = props => {
 
                     <CRow className="width100 text-align-right mt-4" >
                         <CCol lg="12">
-                            <CButton className="ok-btn" onClick={props.saveOK }>{props.okButton}</CButton>
-                            <CButton className="cancel-btn" style={{marginLeft: "45px"}} onClick={props.cancel}>{props.cancelButton}</CButton>
+                            <CButton className="ok-btn" style={{
+                                    backgroundColor: `#6d8ebf`,
+                                    border: 'none',
+                                    minWidth: '100px',
+                                    fontWeight: '600',
+                                    letterSpacing: '0.5px',
+                                    color: "white"
+                                }} onClick={props.saveOK }>{props.okButton}</CButton>
+                            <CButton color="secondary"
+                                variant="outline"  style={{
+                                    minWidth: '100px',
+                                    fontWeight: '500',
+                                    letterSpacing: '0.5px',
+                                    marginLeft: '10px',
+                                }} onClick={props.cancel}>{props.cancelButton}</CButton>
                         </CCol>
                     </CRow>
                 </CButtonToolbar>

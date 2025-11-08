@@ -1,9 +1,11 @@
 import React, { Suspense, useEffect } from 'react'
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useSelector } from 'react-redux'
-
 import { CSpinner, useColorModes } from '@coreui/react'
 import './scss/style.scss'
+
+import { AuthProvider } from './auth/AuthContext.jsx'
+import ProtectedRoute from './auth/ProtectedRoute'
 
 // Containers
 const DefaultLayout = React.lazy(() => import('./layout/DefaultLayout'))
@@ -22,27 +24,35 @@ const App = () => {
     const urlParams = new URLSearchParams(window.location.href.split('?')[1])
     const theme = urlParams.get('theme') && urlParams.get('theme').match(/^[A-Za-z0-9\s]+/)[0]
     setColorMode(storedTheme)
-    if (theme) {
-      setColorMode(theme)
-    }
-
-    if (isColorModeSet()) {
-      return
-    }
+    if (theme) setColorMode(theme)
+    if (isColorModeSet()) return
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const CustomerPublicView = React.lazy(() => import('./views/customer/CustomerViewIndex'))
 
   return (
     <BrowserRouter>
-      <React.Suspense>
-      <Routes>
-          <Route exact path="/login" name="Login Page" element={<Login />} />
-          <Route exact path="/register" name="Register Page" element={<Register />} />
-          <Route exact path="/404" name="Page 404" element={<Page404 />} />
-          <Route exact path="/500" name="Page 500" element={<Page500 />} />
-          <Route path="*" name="Home" element={<DefaultLayout />} />
-        </Routes>
-    </React.Suspense>
-  </BrowserRouter>
+      <AuthProvider>
+        <Suspense fallback={<div className="pt-3 text-center"><CSpinner color="primary" variant="grow" /></div>}>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/404" element={<Page404 />} />
+            <Route path="/500" element={<Page500 />} />
+            <Route path="/customer/view/:id" element={<CustomerPublicView />} />
+            {/* Everything else requires auth */}
+            <Route
+              path="*"
+              element={
+                <ProtectedRoute>
+                  <DefaultLayout />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </Suspense>
+      </AuthProvider>
+    </BrowserRouter>
   )
 }
 

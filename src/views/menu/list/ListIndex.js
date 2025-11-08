@@ -24,6 +24,10 @@ import {
 import Loading from "../../common/Loading"
 import ApiPath from "../../common/ApiPath";
 import { ApiRequest } from "../../common/ApiRequest";
+import deleteImg from '../../../assets/images/delete.png';
+import updateImg from '../../../assets/images/update.png';
+import editImg from '../../../assets/images/edit.png';
+import noDataImg from '../../../assets/images/no-data.png';
 
 const ListIndex = () => {
     const [error, setError] = useState([]); // for error message
@@ -117,10 +121,10 @@ const ListIndex = () => {
 
         let response = await ApiRequest(object);
         if (response.flag === false) {
-            setError([response.message[0]]); setUserData([]); setLoading(false);
+            setUserData([]); setLoading(false);
         } else {
             if (response.data.status === 'OK') {
-                setUserData(response.data.data.data);setCopyData(response.data.data.data);setLoading(false);
+                setUserData(response.data.data);setCopyData(response.data.data);setLoading(false);
                 // setDeletedData([]);setDeletedID("");
             } else {
                 setError([response.data.message]); setSuccess([]);
@@ -143,10 +147,10 @@ const ListIndex = () => {
 
         let response = await ApiRequest(object);
         if (response.flag === false) {
-            setError([response.message[0]]); setUserData([]); setLoading(false);
+            setUserData([]); setLoading(false);
         } else {
             if (response.data.status === 'OK') {
-                setUserData(response.data.data.data);setCopyData(response.data.data.data);setLoading(false);
+                setUserData(response.data.data);setCopyData(response.data.data);setLoading(false);
                 setDeletedID("");setUpdatedID("");
             } else {
                 setError([response.data.message]); setSuccess([]);
@@ -213,6 +217,7 @@ const ListIndex = () => {
 
     let saveOK =async ()=>{
         let res = userData.filter(data => data.id == updatedID)
+        console.log("res",res)
         setError([]);setSuccess([]);setLoading(true);setShow(false);
         let object = {
             url: ApiPath.MenuUpdate,
@@ -221,6 +226,7 @@ const ListIndex = () => {
                 "id": res[0]['id'],
                 "price": res[0]['price'],
                 "meat_id": res[0]['meat_type'],
+                "menu_name": res[0]['menu_name'],
                 "login_id": loginID
             }
         }
@@ -241,7 +247,6 @@ const ListIndex = () => {
 
     let deleteOK =async ()=>{
         setSuccess([]); setError([]); setShow(false);
-        let deletedData = userData.find(data=> data.code == deletedID);
         setLoading(true);
         let object = {
             url: ApiPath.MenuDelete,
@@ -268,6 +273,18 @@ const ListIndex = () => {
     
     let itemChange = (e) => {
         setItem(e.target.value);
+    }
+
+
+    let editNameChange = (id, val)=>{
+        let res = userData.filter(data => {
+            if (data.id == id) {
+                data.menu_name = val;
+                return data;
+            }
+            return data;
+        })
+        setUserData(res);
     }
 
 
@@ -320,7 +337,7 @@ const ListIndex = () => {
 
           
 
-            {userData.length > 0 &&
+            {userData.length > 0 ?(
                 <>
                     <CRow>
                         <CCol>
@@ -334,8 +351,8 @@ const ListIndex = () => {
                                     <thead className="text-center">
                                         <tr>
                                             <th className="bg-body-tertiary" style={{verticalAlign: "middle"}} width="60px" >No</th>
-                                            <th className="bg-body-tertiary" style={{verticalAlign: "middle"}} width="260px">Type</th>
-                                            <th className="bg-body-tertiary" style={{verticalAlign: "middle"}} width="260px">Name</th>
+                                            <th className="bg-body-tertiary" style={{verticalAlign: "middle"}} width="260px">Menu Category</th>
+                                            <th className="bg-body-tertiary" style={{verticalAlign: "middle"}} width="260px">Menu Name</th>
                                             <th className="bg-body-tertiary" style={{verticalAlign: "middle"}} width="230px">Meat</th>
                                             <th className="bg-body-tertiary" style={{verticalAlign: "middle"}} width="210px">Price</th>
                                             <th className="bg-body-tertiary text-center" colSpan={2} style={{verticalAlign: "middle"}} width="100px">Action</th>
@@ -351,10 +368,18 @@ const ListIndex = () => {
                                         >
                                             <td>{index + 1}</td>
                                             <td>{item.menu_type_name}</td>
-                                            <td>{item.menu_name}</td>
+                                            <td>
+                                                {item.edit_flag == true ?
+                                                    <CFormInput type="text" aria-label="sm input example" value={item.menu_name} onChange={(e) => editNameChange(item.id, e.target.value)} />
+                                                    :
+                                                    <label>{item.menu_name}</label>
+                                                }
+                                            </td>
                                             <td>
 
                                                 {item.edit_flag == true ?
+                                                    item.meat_type_name == null ? ""
+                                                    :
                                                      <CFormSelect className="mb-3" value={item.meat_type}   onChange={(e) => editMeatChange(item.id, e.target.value)}>
                                                         {meatData.length > 0 &&
                                                             meatData.map((data, ind) => {
@@ -372,56 +397,32 @@ const ListIndex = () => {
                                             <td className="fw-bold">
                                                 {item.edit_flag == true ?
                                                     <CFormInput type="text" aria-label="sm input example" value={item.price} onChange={(e) => editPriceChange(item.id, e.target.value)} /> :
-                                                    <label>{item.price}</label>
+                                                    <label>฿{item.price}</label>
                                                 }
                                             </td>
                                             <td>
                                                 {item.edit_flag === true ? (
-                                                <CIcon
-                                                    icon={cilClipboard}
-                                                    title="Update"
-                                                    className="plus-button"
-                                                    style={{
-                                                        cursor: "pointer",
-                                                        backgroundColor: "#10B981",
-                                                        borderRadius: "50%",
-                                                        padding: "5px",
-                                                        color: "white",
-                                                        borderColor: "#10B981",
-                                                    }}
-                                                    onClick={() => updateClick(item.id)}
-                                                />
+                                                    <img src={updateImg} alt="Girl Headphones" width={"30"} 
+                                                        onMouseOver={e => e.currentTarget.style.transform = 'scale(1.1)'}
+                                                        onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
+                                                        onClick={() => updateClick(item.id)}
+                                                    />
+                                                
                                                 ) : (
-                                                <CIcon
-                                                    icon={cilPencil}
-                                                    title="Edit"
-                                                    className="plus-button"
-                                                    style={{
-                                                        cursor: "pointer",
-                                                        backgroundColor: "#447ffdff",
-                                                        borderRadius: "50%",
-                                                        padding: "5px",
-                                                        color: "white",
-                                                        borderColor: "#447ffdff",
-                                                    }}
-                                                    onClick={() => editClick(item.id)}
-                                                />
+
+                                                    <img src={editImg} alt="Girl Headphones" width={"30"} 
+                                                        onMouseOver={e => e.currentTarget.style.transform = 'scale(1.1)'}
+                                                        onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
+                                                        onClick={() => editClick(item.id)}
+                                                    />
+                                                
                                                 )}
                                             </td>
                                             <td>
-                                                <CIcon
-                                                    icon={cilMinus}
-                                                    className="plus-button"
-                                                    style={{
-                                                        cursor: "pointer",
-                                                        backgroundColor: "#e53e3e",
-                                                        borderRadius: "50%",
-                                                        padding: "5px",
-                                                        color: "white",
-                                                        borderColor: "#e53e3e",
-                                                    }}
-                                                    title="Delete"
-                                                onClick={() => deleteClick(item.id)}
+                                                <img src={deleteImg} alt="Girl Headphones" width={"30"} 
+                                                    onMouseOver={e => e.currentTarget.style.transform = 'scale(1.1)'}
+                                                    onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
+                                                    onClick={() => deleteClick(item.id)}
                                                 />
                                             </td>
                                         </tr>
@@ -433,7 +434,32 @@ const ListIndex = () => {
                         </CCol>
                     </CRow>
                 </>
-            }
+            ) : (
+                            // ❌ Data not found UI
+                            <div
+                                style={{
+                                textAlign: "center",
+                                padding: "60px 20px",
+                                color: "#6c757d",
+                                border: "2px dashed #dee2e6",
+                                borderRadius: "12px",
+                                backgroundColor: "#f8f9fa",
+                                boxShadow: "inset 0 0 10px rgba(0,0,0,0.03)",
+                                }}
+                            >
+                                <img
+                                    src={noDataImg}
+                                    alt="No Data"
+                                    width="90"
+                                    className="mb-3"
+                                    style={{ opacity: 0.8 }}
+                                />
+                                <h5 style={{ fontWeight: "600" }}>No Data Found</h5>
+                                <p style={{ fontSize: "14px", color: "#999" }}>
+                                    There are currently no records to display.
+                                </p>
+                            </div>
+                )}
 
         </>
     )

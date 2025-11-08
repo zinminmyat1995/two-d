@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { NavLink } from 'react-router-dom'
+import { useLocation   } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import {
   CContainer,
@@ -20,7 +20,7 @@ import {
   cilEnvelopeOpen,
   cilList,
   cilMenu,
-  cilX
+  cilClipboard
 } from '@coreui/icons'
 import { AppHeaderDropdown } from './header/index'
 import ApiPath from "../views/common/ApiPath";
@@ -29,6 +29,7 @@ import { ApiRequest } from "../views/common/ApiRequest";
 const AppHeader = () => {
   const headerRef = useRef()
   const dispatch = useDispatch()
+  const location = useLocation();
   const sidebarShow = useSelector((state) => state.sidebarShow)
   const notifications = useSelector((state) => state.notifications)
   const [loginID , setLoginID ] = useState(localStorage.getItem('LOGIN_ID'));   
@@ -41,10 +42,10 @@ const AppHeader = () => {
   }
 
   useEffect(() => {
-    if (notifications) {
+    if (location.pathname.includes('/order/register') && notifications) {
       notiData();
     }
-  }, [notifications])
+  }, [notifications, location.pathname]);
 
   let notiData = async ()=>{
     let object = {
@@ -111,151 +112,152 @@ const AppHeader = () => {
         </CHeaderToggler>
 
         <CHeaderNav className="ms-auto">
-        <CNavItem>
-            <div style={{ position: 'relative' }} ref={boxRef}>
-              {/* 🔔 Notification Bell */}
-              <CNavLink
-                href="#"
-                style={{ position: 'relative', display: 'inline-block' }}
-                onClick={handleBellClick}
-              >
-                <CIcon icon={cilBell} size="lg" style={{ color: 'white' }} />
-                {notiMessage.length > 0 && (
-                  <CBadge
-                    color="danger"
-                    shape="rounded-pill"
-                    style={{
-                      position: 'absolute',
-                      top: '-5px',
-                      right: '-5px',
-                      fontSize: '0.7rem',
-                      padding: '2px 6px',
-                    }}
+          {location.pathname.includes('/order/register') && (
+            <CNavItem>
+                <div style={{ position: 'relative' }} ref={boxRef}>
+                  {/* 🔔 Notification Bell */}
+                  <CNavLink
+                    href="#"
+                    style={{ position: 'relative', display: 'inline-block' }}
+                    onClick={handleBellClick}
                   >
-                    {notiMessage.length}
-                  </CBadge>
-                )}
-              </CNavLink>
-
-              {/* 📦 Modern Notification Box */}
-              {showBox && (
-                <CCard
-                  className="shadow border-0 animate__animated animate__fadeInDown"
-                  style={{
-                    position: 'absolute',
-                    top: '45px',
-                    right: '0',
-                    width: '340px',
-                    borderRadius: '14px',
-                    overflow: 'hidden',
-                    zIndex: 1000,
-                  }}
-                >
-                  {/* Header */}
-                  <CCardHeader
-                    className="d-flex justify-content-between align-items-center"
-                    style={{
-                      background: 'linear-gradient(135deg, #00b09b, #96c93d)',
-                      color: 'white',
-                      fontWeight: '600',
-                      fontSize: '16px',
-                      borderBottom: 'none',
-                      padding: '10px 15px',
-                    }}
-                  >
-                    🔔 Notifications
-                   
-                  </CCardHeader>
-
-                  {/* Body */}
-                  <CCardBody
-                    style={{
-                      maxHeight: '260px',
-                      overflowY: 'auto', 
-                      overflowX: 'hidden',  
-                      backgroundColor: '#fff',
-                      padding: '0',
-                    }}
-                  >
-                    {notiMessage.length > 0 ? (
-                      notiMessage.map((msg, index) => (
-                        <div
-                          key={index}
-                          style={{
-                            padding: '12px 16px',
-                            borderBottom: '1px solid #f0f0f0',
-                            transition: 'background 0.2s ease, transform 0.2s ease',
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.background = '#f8f9fa';
-                            e.currentTarget.style.transform = 'translateX(4px)';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'transparent';
-                            e.currentTarget.style.transform = 'translateX(0px)';
-                          }}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleNotiClick(msg.id);
-                          }}
-                        >
-                          <span  style={{ fontSize: '12px', color: '#888'}}>
-                            {index + 1} )
-                          </span>
-                          <a
-                            href={`#/table/${msg.table_name}`}
-                            style={{
-                              color: '#007bff',
-                              textDecoration: 'none',
-                              fontWeight: '500',
-                              fontSize: '15px',
-                              marginLeft: "5px"
-                            }}
-                            onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
-                            onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
-                          >
-                            {msg.table_name}
-                          </a>
-                          {/* <div style={{ fontSize: '12px', color: '#888', marginTop: '2px' }}>
-                            Notification #{index + 1}
-                          </div> */}
-                        </div>
-                      ))
-                    ) : (
-                      <div
+                    <CIcon icon={cilClipboard} size="lg" style={{ color: '3c658c' }} />
+                    {notiMessage.length > 0 && (
+                      <CBadge
+                        color="danger"
+                        shape="rounded-pill"
                         style={{
-                          textAlign: 'center',
-                          padding: '20px',
-                          color: '#888',
+                          position: 'absolute',
+                          top: '-5px',
+                          right: '-5px',
+                          fontSize: '0.7rem',
+                          padding: '2px 6px',
                         }}
                       >
-                        No new notifications
-                      </div>
+                        {notiMessage.length}
+                      </CBadge>
                     )}
-                  </CCardBody>
-                </CCard>
-              )}
-            </div>
-        </CNavItem>
+                  </CNavLink>
 
+                  {/* 📦 Modern Notification Box */}
+                  {showBox && (
+                    <CCard
+                      className="shadow border-0 animate__animated animate__fadeInDown"
+                      style={{
+                        position: 'absolute',
+                        top: '45px',
+                        right: '0',
+                        width: '340px',
+                        borderRadius: '14px',
+                        overflow: 'hidden',
+                        zIndex: 1000,
+                      }}
+                    >
+                      {/* Header */}
+                      <CCardHeader
+                        className="d-flex justify-content-between align-items-center"
+                        style={{
+                          background: 'linear-gradient(135deg, #00b09b, #96c93d)',
+                          color: 'white',
+                          fontWeight: '600',
+                          fontSize: '16px',
+                          borderBottom: 'none',
+                          padding: '10px 15px',
+                        }}
+                      >
+                        🔔 Notifications
+                      
+                      </CCardHeader>
+
+                      {/* Body */}
+                      <CCardBody
+                        style={{
+                          maxHeight: '260px',
+                          overflowY: 'auto', 
+                          overflowX: 'hidden',  
+                          backgroundColor: '#fff',
+                          padding: '0',
+                        }}
+                      >
+                        {notiMessage.length > 0 ? (
+                          notiMessage.map((msg, index) => (
+                            <div
+                              key={index}
+                              style={{
+                                padding: '12px 16px',
+                                borderBottom: '1px solid #f0f0f0',
+                                transition: 'background 0.2s ease, transform 0.2s ease',
+                              }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.background = '#f8f9fa';
+                                e.currentTarget.style.transform = 'translateX(4px)';
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.background = 'transparent';
+                                e.currentTarget.style.transform = 'translateX(0px)';
+                              }}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                handleNotiClick(msg.id);
+                              }}
+                            >
+                              <span  style={{ fontSize: '12px', color: '#888'}}>
+                                {index + 1} )
+                              </span>
+                              <a
+                                href={`#/table/${msg.table_name}`}
+                                style={{
+                                  color: '#007bff',
+                                  textDecoration: 'none',
+                                  fontWeight: '500',
+                                  fontSize: '15px',
+                                  marginLeft: "5px"
+                                }}
+                                onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
+                                onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
+                              >
+                                {msg.table_name}
+                              </a>
+                              {/* <div style={{ fontSize: '12px', color: '#888', marginTop: '2px' }}>
+                                Notification #{index + 1}
+                              </div> */}
+                            </div>
+                          ))
+                        ) : (
+                          <div
+                            style={{
+                              textAlign: 'center',
+                              padding: '20px',
+                              color: '#888',
+                            }}
+                          >
+                            No new notifications
+                          </div>
+                        )}
+                      </CCardBody>
+                    </CCard>
+                  )}
+                </div>
+            </CNavItem>
+          )}
 
 
           <CNavItem>
             <CNavLink href="#">
-              <CIcon icon={cilList} size="lg" style={{ color: 'white' }} />
+              <CIcon icon={cilList} size="lg" style={{ color: '#3c658c' }} />
             </CNavLink>
           </CNavItem>
           <CNavItem>
             <CNavLink href="#">
-              <CIcon icon={cilEnvelopeOpen} size="lg" style={{ color: 'white' }} />
+              <CIcon icon={cilEnvelopeOpen} size="lg" style={{ color: '#3c658c' }} />
             </CNavLink>
           </CNavItem>
         </CHeaderNav>
 
         <CHeaderNav>
-          <li className="nav-item py-1">
+          {/* <li className="nav-item py-1">
             <div className="vr h-100 mx-2 text-body text-opacity-75 white-color"></div>
-          </li>
+          </li> */}
           <AppHeaderDropdown />
         </CHeaderNav>
       </CContainer>
