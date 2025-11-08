@@ -23,7 +23,7 @@ export default function CustomerViewIndex() {
       {/* Fixed header area */}
       <header className="top">
         <div className="bar">
-          <div className="brand">Food<span>Go</span></div>
+          <div className="brand">ကေသီမ<span>စားသောက်ဆိုင်</span></div>
           <div className="avatar"><img src="https://i.pravatar.cc/100?img=5" alt="me" /></div>
         </div>
         <p className="subtitle">Order your favourite food!</p>
