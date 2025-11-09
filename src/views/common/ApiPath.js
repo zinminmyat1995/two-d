@@ -48,6 +48,8 @@ export default {
 
     DashboardAllData: `dashboard/all-data`,
     
+    CustomerViewAccCheck: `customer-view/check-acc`,
+    CustomerViewGetData: `customer-view/menu-data`
     
    
 };
