@@ -305,13 +305,13 @@ const OrderIndex = () => {
       });
 
       setMenuData(updatedMenu);
-
+      
       // find selected meat
       let selected;
       updatedMenu.some(menu => {
         const found = menu.meats.find(m => m.id == id && m.menu_sub_id == SubId);
         if (found) {
-          selected = { ...found, price: menu.price, name: menu.name, meat: found.name };
+          selected = { ...found, price: found.price, name: menu.name, meat: found.name };
           return true; // stop looping
         }
         return false;
@@ -319,10 +319,6 @@ const OrderIndex = () => {
       if (!selected) return;
 
       setOrderList(prev => {
-               console.log("prev",prev)
-        console.log("SubId",SubId)
-        console.log("Id",Id)
-        console.log("id",id)
         const exists = prev.find(item => item.id == id && item.menu_id == Id && item.menu_sub_id == SubId);
 
         if (exists) {

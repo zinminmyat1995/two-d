@@ -1,9 +1,11 @@
 import React from 'react'
 
-export default function ProductDetail({ menuData,selectedMenu,selectItemData,back }) {
+export default function ProductDetail({ menuData,selectedMenu,selectItemData,back,plusBtn,minusBtn,plusDailyBtn,minusDailyBtn,totalPrice,reviewOrder }) {
 
 
   console.log("selectItemData",selectItemData)
+  console.log("menuData",menuData)
+
   // --- demo product data ---
   const product = {
     name: 'Hamburger Veggie Burger',
@@ -15,48 +17,7 @@ export default function ProductDetail({ menuData,selectedMenu,selectItemData,bac
       'Enjoy our delicious Hamburger Veggie Burger, made with a savory blend of fresh vegetables and herbs, topped with crisp lettuce, juicy tomatoes and pickles, all served on a soft, toasty bun.',
   }
 
-  // --- meat options (dynamic list) ---
-  const [meats, setMeats] = React.useState([
-    { id: 1, name: 'ကြက်သား', unitPrice: 1.2, qty: 0 },
-    { id: 2, name: 'ဝက်သား', unitPrice: 1.5, qty: 0 },
-    { id: 3, name: 'အမဲသား', unitPrice: 1.8, qty: 0 },
-    { id: 4, name: 'ငါးမနှပ်', unitPrice: 1.0, qty: 0 },
-  ])
 
-  // --- portion (order quantity) ---
-  const [portion, setPortion] = React.useState(1)
-
-  // update qty for a meat row
-  const onQty = (id, delta) => {
-    setMeats((prev) =>
-      prev.map((m) =>
-        m.id === id ? { ...m, qty: Math.max(0, m.qty + delta) } : m
-      )
-    )
-  }
-
-  const onPortion = (delta) =>
-    setPortion((p) => Math.max(1, p + delta))
-
-  // total price = basePrice*portion + sum(meat.qty*unitPrice)
-  const extra = meats.reduce((s, m) => s + m.qty * m.unitPrice, 0)
-  const total = (product.basePrice * portion + extra).toFixed(2)
-
-  const orderNow = () => {
-    const picked = meats.filter((m) => m.qty > 0)
-    alert(
-      JSON.stringify(
-        {
-          product: product.name,
-          portion,
-          meats: picked.map(({ name, qty }) => ({ name, qty })),
-          total,
-        },
-        null,
-        2
-      )
-    )
-  }
 
   return (
     <div className="page">
@@ -114,13 +75,17 @@ export default function ProductDetail({ menuData,selectedMenu,selectItemData,bac
           {/* dynamic rows */}
           <div className="meat-list">
             {selectItemData[0]['meats'].length > 0 ?
-                meats.map((m) => (
+                selectItemData[0]['meats'].map((m) => (
                   <div className="meat-row" key={m.id}>
-                    <div className="meat-name">{m.name}</div>
+                    <div className="meat-item">
+                     <div className="meat-name">
+                      {m.name} <span className="meat-price">( ฿{m.price} )</span>
+                    </div>
+                    </div>
                     <div className="qty">
                       <button
                         className="btn minus"
-                        onClick={() => onQty(m.id, -1)}
+                        onClick={() => minusBtn(m.menu_sub_id, selectItemData[0]['menu_id'],m.id,selectItemData[0]['name'] )}
                         aria-label={`decrease ${m.name}`}
                         style={{
                           '--cui-btn-padding-x': '0',
@@ -132,10 +97,10 @@ export default function ProductDetail({ menuData,selectedMenu,selectItemData,bac
                       >
                         −
                       </button>
-                      <span className="num">{m.qty}</span>
+                      <span className="num">{m.count}</span>
                       <button
                         className="btn plus"
-                        onClick={() => onQty(m.id, +1)}
+                        onClick={() => plusBtn(m.menu_sub_id,selectItemData[0]['menu_id'], m.id,selectItemData[0]['name'] )}
                         aria-label={`increase ${m.name}`}
                         style={{
                           '--cui-btn-padding-x': '0',
@@ -152,11 +117,13 @@ export default function ProductDetail({ menuData,selectedMenu,selectItemData,bac
                 ))
               :
                 <div className="meat-row">
-                  <div className="meat-name">{selectItemData[0]['name']}</div>
+                    <div className="meat-name">
+                      {selectItemData[0]['name']} <span className="meat-price">( ฿{selectItemData[0]['price']} )</span>
+                    </div>
                   <div className="qty">
                     <button
                       className="btn minus"
-                      onClick={() => onQty(m.id, -1)}
+                      onClick={() => minusDailyBtn(selectItemData[0]['menu_sub_id'], selectItemData[0]['menu_id'], selectItemData[0]['name'])}
                       aria-label={`decrease ${selectItemData[0]['name']}`}
                       style={{
                         '--cui-btn-padding-x': '0',
@@ -171,7 +138,7 @@ export default function ProductDetail({ menuData,selectedMenu,selectItemData,bac
                     <span className="num">{selectItemData[0]['count']}</span>
                     <button
                       className="btn plus"
-                      onClick={() => onQty(m.id, +1)}
+                      onClick={() => plusDailyBtn(selectItemData[0]['menu_sub_id'], selectItemData[0]['menu_id'], selectItemData[0]['name'])}
                       aria-label={`increase ${selectItemData[0]['name']}`}
                       style={{
                         '--cui-btn-padding-x': '0',
@@ -197,9 +164,9 @@ export default function ProductDetail({ menuData,selectedMenu,selectItemData,bac
       {/* Bottom fixed bar */}
       <div className="bottom">
         <div className="price">
-          <span className="amount">฿{total}</span>
+          <span className="amount">฿{totalPrice}</span>
         </div>
-        <button className="cta" onClick={orderNow}>ORDER NOW</button>
+        <button className="cta" onClick={reviewOrder}>Review Order</button>
       </div>
 
       {/* Styles */}
@@ -267,7 +234,18 @@ export default function ProductDetail({ menuData,selectedMenu,selectItemData,bac
           display:flex; align-items:center; justify-content:space-between;
           padding:10px 12px;
         }
-        .meat-name{ font-weight:600; color:#111827; }
+        .meat-name {
+          font-weight: 500;
+          color: #444;
+        }
+
+        .meat-name .meat-price {
+          color: #ff0000;
+          font-size: 0.9em;
+          margin-left: 6px;
+        }
+
+
 
         .portion{
           margin-top:14px; display:flex; align-items:center; justify-content:space-between;

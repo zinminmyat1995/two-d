@@ -1,6 +1,10 @@
 import React from 'react'
-
-export default function MenuCard({ menuData,main,selectedMenu,cardClick,menuClick  }) {
+import {
+  cilBasket
+} from '@coreui/icons'
+import { ShoppingCart } from "lucide-react";
+import CIcon from '@coreui/icons-react'
+export default function MenuCard({ menuData,main,selectedMenu,cardClick,menuClick,basketclick  }) {
 
 
   return (
@@ -8,8 +12,8 @@ export default function MenuCard({ menuData,main,selectedMenu,cardClick,menuClic
             {/* Fixed header area */}
             <header className="top">
                 <div className="bar">
-                <div className="brand">The<span>Six</span></div>
-                <div className="avatar"><img src="https://i.pravatar.cc/100?img=5" alt="me" /></div>
+                    <div className="brand">The<span>Six</span></div>
+                    <div className="avatar"> <ShoppingCart size={30} color="#ff4b47" strokeWidth={2} onClick={basketclick} /></div>
                 </div>
                 <p className="subtitle">Order your favourite food!</p>
 
@@ -115,7 +119,7 @@ export default function MenuCard({ menuData,main,selectedMenu,cardClick,menuClic
                 .bar{display:flex; justify-content:space-between; align-items:center}
                 .brand{font-weight:800; font-size:26px; color:var(--text)}
                 .brand span{color:var(--red)}
-                .avatar{width:36px; height:36px; border-radius:50%; overflow:hidden; border:2px solid rgba(0,0,0,.05)}
+                .avatar{width:36px; height:36px; margin-right: 5px;}
                 .avatar img{width:100%; height:100%; object-fit:cover}
                 .subtitle{margin:6px 0 10px; color:var(--muted); font-size:14px}
 
