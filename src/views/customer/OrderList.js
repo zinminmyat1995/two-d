@@ -1,9 +1,8 @@
 import React from "react";
 import basket from "../../assets/images/basket.png";
 
-export default function OrderList({ back, orderList = [] }) {
-  const onContinue = () => console.log("Continue shopping");
-  const onTrack = () => console.log("Go to tracking");
+export default function OrderList({ back, orderList = [], tableNo,totalPrice, plusDailyBtn, minusDailyBtn ,minusBtn, plusBtn, deleteBtn, deleteDailyBtn,orderClick}) {
+
 
   const product = {
     name: "Hamburger Veggie Burger",
@@ -15,37 +14,39 @@ export default function OrderList({ back, orderList = [] }) {
       "Enjoy our delicious Hamburger Veggie Burger, made with a savory blend of fresh vegetables and herbs, topped with crisp lettuce, juicy tomatoes and pickles, all served on a soft, toasty bun.",
   };
 
-  // NEW: total calculation (price * count)
-  const total = orderList.reduce(
-    (sum, it) => sum + (Number(it.price) || 0) * (Number(it.count) || 0),
-    0
-  );
 
   return (
     <div className="">
       <div className="">
         {/* Top bar (sticky) */}
         <div className="pd-topbar">
-          <button
-            type="button"
-            className="icon-btn back-btn"
-            aria-label="back"
-            onClick={back}
-          >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+            <button
+                type="button"
+                className="icon-btn back-btn"
+                aria-label="back"
+                onClick={back}
             >
-              <path d="M15 18l-6-6 6-6" />
-            </svg>
-          </button>
-          <div className="pd-title">My Order</div>
+                <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                >
+                <path d="M15 18l-6-6 6-6" />
+                </svg>
+            </button>
+
+            <div className="pd-title">My Order</div>
+
+            {/* 👉 table number badge */}
+            <div className="table-badge">
+                <span className="table-label">Table</span>
+                <span className="table-num">{tableNo}</span>
+            </div>
         </div>
 
         {/* Content */}
@@ -57,22 +58,41 @@ export default function OrderList({ back, orderList = [] }) {
                   <img className="cv-img" src={product.img} alt={product.name} />
                   <div className="cv-body">
                     <div className="cv-name">{it.name}</div>
+                    <div className="cv-meat">{it.meat}</div>
 
                     <div className="cv-row">
                       <div className="cv-stepper">
-                        <button className="cv-step" aria-label="decrease">
-                          −
+                        <button className="cv-step" aria-label="decrease"
+                            onClick={() =>
+                                it.meat && it.meat != ""
+                                ? minusBtn(it.menu_sub_id,it.menu_id, it.id,it.name,"list" )
+                                : minusDailyBtn(it.menu_sub_id,it.menu_id,it.name,"list")
+                            }
+                        >
+                            -
                         </button>
                         <div className="cv-qty">{it.count}</div>
-                        <button className="cv-step" aria-label="increase">
-                          ＋
+                        <button className="cv-step" aria-label="increase" 
+                            onClick={() =>
+                                it.meat && it.meat != ""
+                                ? plusBtn(it.menu_sub_id,it.menu_id, it.id,it.name,"list" )
+                                : plusDailyBtn(it.menu_sub_id, it.menu_id, it.name,"list")
+                            }
+                        >
+                           +
                         </button>
                       </div>
                     </div>
                   </div>
 
                   <div className="cv-side">
-                    <button className="cv-trash" aria-label="remove">
+                    <button className="cv-trash" aria-label="remove"
+                        onClick={() =>
+                                it.meat && it.meat != ""
+                                ? deleteBtn(it.menu_sub_id,it.menu_id, it.id,it.name,"list" )
+                                : deleteDailyBtn(it.menu_sub_id,it.menu_id,it.name,"list")
+                            }
+                    >
                       <svg
                         viewBox="0 0 24 24"
                         width="18"
@@ -100,12 +120,12 @@ export default function OrderList({ back, orderList = [] }) {
               <div className="cv-totalcard">
                 <div className="cv-total-left">
                   <div className="cv-tlabel">Total Bill</div>
-                  <div className="cv-tnote">Tax included</div>
+                  {/* <div className="cv-tnote">Tax included</div> */}
                 </div>
-                <div className="cv-amount">฿{total.toFixed(2)}</div>
+                <div className="cv-amount">฿{totalPrice}</div>
               </div>
 
-              <button className="cv-cta-fixed">
+              <button className="cv-cta-fixed" onClick={orderClick}>
                 <span>Order Now</span>
               </button>
             </div>
@@ -161,7 +181,7 @@ export default function OrderList({ back, orderList = [] }) {
         .back-btn svg{stroke:#ff4b47;width:22px;height:22px}
         .pd-title{
           position:absolute;left:50%;transform:translateX(-50%);
-          font-size:14px;font-weight:700;color:#1f2937;
+          font-size:16px;font-weight:700;color:#1f2937;
         }
 
         /* Empty state content area */
@@ -197,11 +217,12 @@ export default function OrderList({ back, orderList = [] }) {
         /* Orders list */
         .cv-list{padding:12px;display:grid;gap:10px;overflow:auto}
         /* make space for fixed footer */
-        .cv-list.cv-has-footer{padding-bottom:140px;}
+        .cv-list.cv-has-footer{padding-bottom:160px;}
         .cv-item{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;background:#fff;border-radius:14px;border:1px solid #f1eef2;box-shadow:0 1px 2px rgba(0,0,0,.03);padding:10px}
         .cv-img{width:54px;height:54px;object-fit:contain;border-radius:12px;background:#fff}
-        .cv-body{display:flex;flex-direction:column;gap:8px}
-        .cv-name{font-size:13px;font-weight:600;color:#1f2937}
+        .cv-body{display:flex;flex-direction:column;gap:8px;}
+        .cv-name{font-size:15px;font-weight:600;color:#1f2937;}
+        .cv-meat{font-size:13px;color:#1f2937;margin-top: -5px;}
         .cv-row{display:flex;align-items:center;gap:8px}
         .cv-stepper{display:inline-flex;align-items:center;gap:8px;border:1px solid #eee;border-radius:9999px;background:#f7f7f9;padding:6px 10px}
         .cv-step{width:26px;height:26px;border-radius:9999px;border:1px solid #e6e3e8;background:#fff;display:grid;place-items:center;line-height:1;font-size:16px;color:#111827;cursor:pointer}
@@ -226,12 +247,44 @@ export default function OrderList({ back, orderList = [] }) {
           border-radius:14px;padding:10px 14px;margin-bottom:10px;
         }
         .cv-total-left{display:flex;flex-direction:column}
-        .cv-tlabel{font-size:12px;color:#7c7a80}
+        .cv-tlabel{font-size:17px;color:#7c7a80}
         .cv-tnote{font-size:10px;color:#c3c0c6;margin-top:2px}
         .cv-amount{
-          font-weight:800;font-size:18px;letter-spacing:.2px;
-          color:#5e2032;
+          font-size:18px;letter-spacing:.2px;
+          color:#7c7a80;
         }
+
+        .table-badge {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(145deg, #fff4f4, #ffe5e5);
+            border: 1px solid #ffc5c5;
+            color: #b91c1c;
+            font-weight: 700;
+            font-size: 13px;
+            border-radius: 14px;
+            padding: 6px 10px;
+            box-shadow: 0 2px 5px rgba(251, 78, 75, 0.15);
+            }
+
+            .table-label {
+            font-weight: 600;
+            color: #fb4e4b;
+            font-size: 12px;
+            }
+
+            .table-num {
+            background: #fb4e4b;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 8px;
+            padding: 2px 6px;
+            min-width: 22px;
+            text-align: center;
+            }
 
         .cv-cta-fixed{
           width:100%;display:flex;align-items:center;justify-content:center;gap:10px;

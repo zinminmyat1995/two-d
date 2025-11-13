@@ -2,10 +2,6 @@ import React from 'react'
 
 export default function ProductDetail({ menuData,selectedMenu,selectItemData,back,plusBtn,minusBtn,plusDailyBtn,minusDailyBtn,totalPrice,reviewOrder }) {
 
-
-  console.log("selectItemData",selectItemData)
-  console.log("menuData",menuData)
-
   // --- demo product data ---
   const product = {
     name: 'Hamburger Veggie Burger',
@@ -229,7 +225,7 @@ export default function ProductDetail({ menuData,selectedMenu,selectItemData,bac
         .row-head .label{ font-size:13px; color:#111827; font-weight:700; }
         .row-head .hint{ font-size:12px; color: var(--muted); margin-top:4px; }
 
-        .meat-list{ margin-top: 10px; display:flex; flex-direction:column; gap:12px; }
+        .meat-list{ margin-top: 10px; display:flex; flex-direction:column; gap:5px; }
         .meat-row{
           display:flex; align-items:center; justify-content:space-between;
           padding:10px 12px;
@@ -282,7 +278,7 @@ export default function ProductDetail({ menuData,selectedMenu,selectItemData,bac
         .cta{
           flex:1;
           height:48px; border-radius:14px; border:0;
-          background:#2b2b2b; color:#fff; font-weight:800; letter-spacing:.3px;
+          background:#4f4f4f; color:#fff; font-weight:800; letter-spacing:.3px;
           box-shadow: var(--shadow);
         }
 

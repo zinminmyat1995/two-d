@@ -130,7 +130,7 @@ export default function MenuCard({ menuData,main,selectedMenu,cardClick,menuClic
 
                 .chips{display:flex; gap:10px; overflow-x:auto; padding:12px 2px 2px; scrollbar-width:none}
                 .chips::-webkit-scrollbar{display:none}
-                .chip{border:0; background:var(--chip); color:#0f172a; padding:8px 14px; border-radius:999px; font-weight:600; font-size:13px; white-space:nowrap}
+                .chip{border:0; background: white; color:#0f172a; padding:8px 14px; border-radius:999px; font-weight:600; font-size:13px; white-space:nowrap;border: 1px solid rgb(255 75 71);}
                 .chip.active{background:var(--red); color:#fff}
 
                 /* ===== Scroll area + equal-card grid ===== */

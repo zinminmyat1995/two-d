@@ -38,6 +38,7 @@
     "file-saver": "^2.0.5",
     "framer-motion": "^12.23.0",
     "interweave": "^13.1.0",
+    "js-base64": "^3.7.8",
     "laravel-echo": "^2.0.2",
     "lucide-react": "^0.544.0",
     "process": "^0.11.10",
