@@ -529,7 +529,7 @@ export default function CustomerViewIndex() {
         setShowConfirm(false);setLoading(true);let obj = "";
          obj = {
             method: "post",
-            url: ApiPath.OrderRegister,
+            url: ApiPath.CustomerViewOrderRegister,
             params: {
               "order_type": 0,
               "table_id": tableID,
