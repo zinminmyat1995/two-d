@@ -86,7 +86,7 @@ export default function CustomerViewIndex() {
       setSelectedMenu(res[0]?.name || '')
       setMain(res)
       setMenuData(res[0]?.data || [])
-      setLoading(false)
+      setLoading(false);setShowSuccess(false)
     }
   }
 
@@ -552,7 +552,6 @@ export default function CustomerViewIndex() {
             setShowSuccess(true)
             setSuccessText2([response.data.message]);
             setSuccessText1("Success!");setOrderList([]);getData();setPage(1);
-            setTimeout(() => setShowSuccess(false), 3000);
             window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
           }else{
               setErrorText1("Fail to save!");setShowError(true);setErrorText2([response.data.message]);setLoading(false);
