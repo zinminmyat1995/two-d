@@ -160,7 +160,7 @@ export default function MenuCard({
               className="rating-submit"
               type="button"
               disabled={selectedStars === 0}
-              onClick={closeRating}
+              onClick={()=>closeRating("btn")}
             >
               Submit rating
             </button>

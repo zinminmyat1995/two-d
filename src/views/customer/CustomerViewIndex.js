@@ -708,39 +708,44 @@ console.log("menu data",menuData)
         return matches;
       }
 
-    const closeRating =async () => {
-      if(selectedStars > 0){
-        setLoading(true);
-        let object = {
-          url: ApiPath.CustomerViewRating,
-          method: 'post',
-          params: {
-            "rate": selectedStars,
-            "id": activeItem.menu_sub_id
+    const closeRating =async (status) => {
+      if(status == ""){
+        if(selectedStars > 0){
+          setLoading(true);
+          let object = {
+            url: ApiPath.CustomerViewRating,
+            method: 'post',
+            params: {
+              "rate": selectedStars,
+              "id": activeItem.menu_sub_id
+            }
           }
-        }
-      
-        let response = await ApiRequest(object);
-        if (response.flag === false) {
-            setPage(4);setLoading(false);
-        } else {
-          if (response.data.status === 'OK') {
-            setShowRating(false);setLoading(false);
-            setActiveItem(null)
-            setSelectedStars(0)
-            setShowRatingSuccess(true);
-            setTimeout(() => {
-              setShowRatingSuccess(false);
-            }, 2000);
-
+        
+          let response = await ApiRequest(object);
+          if (response.flag === false) {
+              setPage(4);setLoading(false);
           } else {
-            setPage(4);setLoading(false);
-          }
-        }
+            if (response.data.status === 'OK') {
+              setShowRating(false);setLoading(false);
+              setActiveItem(null)
+              setSelectedStars(0)
+              setShowRatingSuccess(true);
+              setTimeout(() => {
+                setShowRatingSuccess(false);
+              }, 2000);
 
+            } else {
+              setPage(4);setLoading(false);
+            }
+          }
+
+        }else{
+          setShowRating(false);
+        }
       }else{
         setShowRating(false);
       }
+     
     }
 
     const openRating = (item) => {
