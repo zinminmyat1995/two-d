@@ -4,7 +4,8 @@ import {
 } from '@coreui/icons'
 import { ShoppingCart } from "lucide-react";
 import CIcon from '@coreui/icons-react'
-export default function MenuCard({ menuData,main,selectedMenu,cardClick,menuClick,basketclick  }) {
+import EmptySearch from "./EmptySearch"
+export default function MenuCard({ menuData,main,selectedMenu,cardClick,menuClick,basketclick ,search, searchChange,searchData,debouncedSearch }) {
 
 
   return (
@@ -20,59 +21,70 @@ export default function MenuCard({ menuData,main,selectedMenu,cardClick,menuClic
                 <div className="search">
                 <div className="search-input">
                     <SearchIcon />
-                    <input placeholder="Search" />
+                    <input placeholder="Search" value={search} onChange={searchChange} />
                 </div>
                 <button className="filter-btn" aria-label="filters"><SlidersIcon /></button>
                 </div>
 
-                <div className="chips">
-                {main.map((f, i) => (
-                    <button key={i}
-                    className={`chip ${selectedMenu === f.name ? 'active' : ''}`}
-                    onClick={() => menuClick(f.name)}
-                    >
-                    {f.name}
-                    </button>
-                ))}
-                </div>
-            </header>
-
-                {/* Only this part scrolls */}
-                <main className="cards" role="region" aria-label="Menu list">
-                    <div className="grid">
-                        {menuData.map((it, i) => (
-                        <article key={i} className="card burger-card">
-                            {/* top image (small, centered, soft bg) */}
-                            <div className="thumb" onClick={()=>cardClick(it.name, it.meats)}>
-                                <img 
-                                    src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=600&auto=format&fit=crop"
-                                    alt={it.name}
-                                />
-                            
-                            </div>
-
-                            {/* text + bottom row */}
-                            <div className="meta meta--tight">
-                                <h3 className="title clamp-1">{it.name}</h3>
-                                {/* <p className="sub clamp-1">{it.brand || "Wendy's Burger"}</p> */}
-
-                                <div className="bottom-row">
-                                    <span className="rating-wrap">
-                                    <StarIcon />
-                                    <span className="rating">{it.rate}</span>
-                                    </span>
-
-                                    <button className={`heart liked`} aria-label="like">
-                                        <HeartIcon filled={false} />
-                                    </button>
-                                </div>
-                            </div>
-                        </article>
+                {searchData.length < 1 && debouncedSearch == "" &&
+                    <div className="chips">
+                        {main.map((f, i) => (
+                            <button key={i}
+                            className={`chip ${selectedMenu === f.name ? 'active' : ''}`}
+                            onClick={() => menuClick(f.name)}
+                            >
+                            {f.name}
+                            </button>
                         ))}
                     </div>
-                    <div style={{ height: 84 }} />
-                </main>
+                }
+                
+            </header>
 
+                { (searchData.length < 1 && debouncedSearch != "" )?
+                    (
+                        <EmptySearch />
+                    )
+                    :
+                    (
+                        <main className="cards" role="region" aria-label="Menu list" style={{marginTop: `${searchData.length > 0? '148px' : '200px'}`}}>
+                            <div className="grid">
+                                {menuData.map((it, i) => (
+                                <article key={i} className="card burger-card">
+                                    {/* top image (small, centered, soft bg) */}
+                                    <div className="thumb" onClick={()=>cardClick(it.name, it.meats)}>
+                                        <img 
+                                            src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=600&auto=format&fit=crop"
+                                            alt={it.name}
+                                        />
+                                    
+                                    </div>
+
+                                    {/* text + bottom row */}
+                                    <div className="meta meta--tight">
+                                        <h3 className="title clamp-1">{it.name}</h3>
+                                        {/* <p className="sub clamp-1">{it.brand || "Wendy's Burger"}</p> */}
+
+                                        <div className="bottom-row">
+                                            <span className="rating-wrap">
+                                            <StarIcon />
+                                            <span className="rating">{it.rate}</span>
+                                            </span>
+
+                                            <button className={`heart liked`} aria-label="like">
+                                                <HeartIcon filled={false} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </article>
+                                ))}
+                            </div>
+                            <div style={{ height: 84 }} />
+                        </main>
+                    )
+                    
+                }
+                
 
             {/* Bottom nav (fixed) */}
             {/* <nav className="bottom">
@@ -126,7 +138,7 @@ export default function MenuCard({ menuData,main,selectedMenu,cardClick,menuClic
                 .search{display:grid; grid-template-columns:1fr 44px; gap:10px; align-items:center}
                 .search-input{display:flex; align-items:center; gap:10px; background:#f7f8fa; border:1px solid #eef0f3; border-radius:14px; padding:10px 12px}
                 .search-input input{border:0; outline:0; flex:1; background:transparent; font-size:14px}
-                .filter-btn{height:44px; width:44px; border-radius:12px; border:0; background:#0f172a; color:#fff; display:grid; place-items:center}
+                .filter-btn{height:44px; width:44px; border-radius:12px; border:0; background:#ff4b47; color:#fff; display:grid; place-items:center}
 
                 .chips{display:flex; gap:10px; overflow-x:auto; padding:12px 2px 2px; scrollbar-width:none}
                 .chips::-webkit-scrollbar{display:none}
@@ -134,7 +146,7 @@ export default function MenuCard({ menuData,main,selectedMenu,cardClick,menuClic
                 .chip.active{background:var(--red); color:#fff}
 
                 /* ===== Scroll area + equal-card grid ===== */
-                .cards{padding:0 12px 0; margin-top:var(--top-h); min-height:calc(100svh - var(--top-h)); overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain}
+                .cards{padding:0 12px 0; min-height:calc(100svh - var(--top-h)); overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain}
                 .grid{
                 display:grid;
                 grid-template-columns: repeat(auto-fill, minmax(var(--card-min), 1fr));

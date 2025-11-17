@@ -31,6 +31,11 @@ export default function CustomerViewIndex() {
   const [tableNo, setTableNo ] = useState("")
   const [tableID, setTableID ] = useState("")
   const [showConfirm, setShowConfirm] = useState(false)
+  const [search, setSearch ] = useState("")
+  const [debouncedSearch, setDebouncedSearch] = useState(search); 
+  const [searchData, setSearchData ] = useState([])
+  const [copyMenuData, setCopyMenuData ] = useState([]);
+  const [copySelectMenu, setCopySelectMenu ] = useState("")
 
   const account = React.useMemo(
     () => pathname.replace(/\/$/, '').split('/').pop(),
@@ -44,7 +49,32 @@ export default function CustomerViewIndex() {
     })()
   }, [])
 
-  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search); // 4s အပြီးမှ update
+    }, 2000);
+
+    return () => clearTimeout(timer); // user တစ်ချက်ချင်း reset
+  }, [search]);
+
+  useEffect(() => {
+    setSearch(debouncedSearch)
+    if(debouncedSearch == ""){
+      setMenuData(main[0]?.data || []);
+      setSearchData([]);setSelectedMenu(main[0]?.name || '')
+    }else{
+      const results = searchDishesByNameOrMeat(main, debouncedSearch);
+      setSelectedMenu(results[0]?.categoryName || '');
+      setMenuData(results);setSearchData(results);
+    }
+    
+  }, [debouncedSearch]);
+
+  console.log("select menu",selectedMenu)
+  console.log("search data",searchData)
+  console.log("debouncedSearch",debouncedSearch)
+
+
   let checkAcc =async ()=>{
     setLoading(true);
     let object = {
@@ -105,8 +135,10 @@ export default function CustomerViewIndex() {
   }
 
     const plusBtn = (SubId,Id,id,name,status) => {
+
       let updatedMenu=[];let selMenu = selectedMenu;
     if(status == undefined){
+        
         updatedMenu = menuData.map(d => {
           if (d.menu_id !== Id) return d;
   
@@ -129,8 +161,8 @@ export default function CustomerViewIndex() {
         });
     }else{
       let filterData = main.find((menu) => menu.id === Id)?.data || [];
-      let name = main.find((menu) => menu.id === Id)?.name || [];
-      selMenu = name;
+      let n = main.find((menu) => menu.id === Id)?.name || [];
+      selMenu = n;
       
         updatedMenu = filterData.map(d => {
           if (d.menu_id !== Id) return d;
@@ -194,16 +226,132 @@ export default function CustomerViewIndex() {
             ];
           }
         });
-  
-        setMain(prev => {
-          return prev.map(item =>
-            item.name == selMenu
-              ? { ...item, data: updatedMenu }
-              : item
-          );
-        });
+        let result = updatedMenu.filter(d=> d.name == name && d.menu_id == Id)
+        console.log("RES",result)
+
+        setMain(prev =>
+          prev.map(item => {
+            console.log("item",item)
+            if (item.name === result[0].categoryName) {
+              return {
+                ...item,
+                data: item.data.map(d => {
+                  if (d.menu_id === result[0].menu_id && d.name === result[0].name) {
+                    return {
+                      ...d,
+                      meats: result[0].meats   // ← “mests” typo ကို “meats” ပြင်ထားပါတယ်
+                    };
+                  }
+                  return d;
+                })
+              };
+            }
+            return item;
+          })
+        );
+
     };
   
+    const plusDailyBtn = (SubId,Id,name,status) => {
+
+      let updatedMenu=[];let selMenu = selectedMenu;
+
+      if(status == undefined){
+          updatedMenu = menuData.map(d => {
+            if (d.menu_id == Id && d.menu_sub_id == SubId){
+              return {
+                ...d,
+                meats: [],
+                count: d.count + 1,
+              };
+            }else{
+              return d;
+            } 
+          });
+      }else{
+        let filterData = main.find((menu) => menu.id === Id)?.data || [];
+        let n = main.find((menu) => menu.id === Id)?.name || [];
+        selMenu = n;
+        
+        updatedMenu = filterData.map(d => {
+            if (d.menu_id == Id && d.menu_sub_id == SubId){
+              return {
+                ...d,
+                meats: [],
+                count: d.count + 1,
+              };
+            }else{
+              return d;
+            } 
+          });
+      }
+      console.log("NAME",name)
+
+
+        let res = updatedMenu.filter(data=> data.name == name)
+        setSelectItemData(res)
+        setMenuData(searchData.length > 0 ? res : updatedMenu);
+   
+        let selected;
+
+        updatedMenu.some(menu => {
+          if (menu.menu_sub_id == SubId && menu.menu_id == Id) {
+            selected = { 
+              ...menu, 
+              price: menu.price, 
+              name: menu.name,
+              meat: null,
+              id: menu.menu_sub_id
+            };
+            return true; 
+          }
+          return false;
+        });
+        if (!selected) return;
+        setOrderList(prev => {
+          const exists = prev.find(item => item.menu_id == Id && item.menu_sub_id == SubId); 
+          if (exists) {
+            return prev.map(item =>
+              item.menu_id == Id && item.menu_sub_id == SubId ? { ...item, count: selected.count } : item
+            );
+          } else {
+            return [
+              ...prev,
+              {
+                id: selected.id,
+                name: selected.name,
+                price: selected.price,
+                count: selected.count,
+                meat: selected.meat,
+                menu_id: Id,
+                menu_sub_id: SubId,
+              }
+            ];
+          }
+        });
+
+        let result = updatedMenu.filter(d=> d.name == name && d.menu_id == Id)
+
+        setMain(prev =>
+          prev.map(item => {
+            if (item.name == result[0].categoryName) {
+              return {
+                ...item,
+                data: item.data.map(d => {
+                  if (d.menu_id === result[0].menu_id && d.name === result[0].name) {
+                    return {
+                      ...d,
+                      count: result[0].count
+                    };
+                  }
+                  return d;
+                })
+              };
+            }
+            return item;
+          })
+        );
+    };
 
     const minusBtn = (SubId,Id,id, name, status) => {
       let updatedMenu=[];let selMenu = selectedMenu;
@@ -224,8 +372,8 @@ export default function CustomerViewIndex() {
           });
         }else{
           let filterData = main.find((menu) => menu.id === Id)?.data || [];
-          let name = main.find((menu) => menu.id === Id)?.name || [];
-          selMenu = name;
+          let n = main.find((menu) => menu.id === Id)?.name || [];
+          selMenu = n;
           
             updatedMenu = filterData.map(d => {
                 if (d.menu_id !== Id) return d;
@@ -257,102 +405,30 @@ export default function CustomerViewIndex() {
             .filter(item => item.count > 0) 
         );
 
-        setMain(prev => {
-          return prev.map(item =>
-            item.name == selMenu
-              ? { ...item, data: updatedMenu }
-              : item
-          );
-        });
-      };
+        let result = updatedMenu.filter(d=> d.name == name && d.menu_id == Id)
+console.log("result",result)
 
-
-
-  const plusDailyBtn = (SubId,Id,name,status) => {
-    let updatedMenu=[];let selMenu = selectedMenu;
-
-    if(status == undefined){
-        updatedMenu = menuData.map(d => {
-          if (d.menu_id == Id && d.menu_sub_id == SubId){
-            return {
-              ...d,
-              meats: [],
-              count: d.count + 1,
-            };
-          }else{
-            return d;
-          } 
-        });
-    }else{
-      let filterData = main.find((menu) => menu.id === Id)?.data || [];
-      let name = main.find((menu) => menu.id === Id)?.name || [];
-      selMenu = name;
-      
-      updatedMenu = filterData.map(d => {
-          if (d.menu_id == Id && d.menu_sub_id == SubId){
-            return {
-              ...d,
-              meats: [],
-              count: d.count + 1,
-            };
-          }else{
-            return d;
-          } 
-        });
-    }
-
-      let res = updatedMenu.filter(data=> data.name == name)
-
-      setSelectItemData(res)
-      setMenuData(updatedMenu);
-      
-      let selected;
-
-      updatedMenu.some(menu => {
-        if (menu.menu_sub_id == SubId && menu.menu_id == Id) {
-          selected = { 
-            ...menu, 
-            price: menu.price, 
-            name: menu.name,
-            meat: null,
-            id: menu.menu_sub_id
-          };
-          return true; 
-        }
-        return false;
-      });
-      if (!selected) return;
-      setOrderList(prev => {
-        const exists = prev.find(item => item.menu_id == Id && item.menu_sub_id == SubId); 
-        if (exists) {
-          return prev.map(item =>
-             item.menu_id == Id && item.menu_sub_id == SubId ? { ...item, count: selected.count } : item
-          );
-        } else {
-          return [
-            ...prev,
-            {
-              id: selected.id,
-              name: selected.name,
-              price: selected.price,
-              count: selected.count,
-              meat: selected.meat,
-              menu_id: Id,
-              menu_sub_id: SubId,
+        setMain(prev =>
+          prev.map(item => {
+            console.log("item",item)
+            if (item.name === result[0].categoryName) {
+              return {
+                ...item,
+                data: item.data.map(d => {
+                  if (d.menu_id === result[0].menu_id && d.name === result[0].name) {
+                    return {
+                      ...d,
+                      meats: result[0].meats
+                    };
+                  }
+                  return d;
+                })
+              };
             }
-          ];
-        }
-      });
-
-      setMain(prev => {
-        return prev.map(item =>
-          item.name == selMenu
-            ? { ...item, data: updatedMenu }
-            : item
+            return item;
+          })
         );
-      });
-  };
-
+      };
 
     const minusDailyBtn = (SubId,Id, name, status) => {
       let updatedMenu=[];let selMenu = selectedMenu;
@@ -370,8 +446,8 @@ export default function CustomerViewIndex() {
         });
     }else{
       let filterData = main.find((menu) => menu.id === Id)?.data || [];
-      let name = main.find((menu) => menu.id === Id)?.name || [];
-      selMenu = name;
+      let n = main.find((menu) => menu.id === Id)?.name || [];
+      selMenu = n;
 
        updatedMenu = filterData.map(d => {
           if (d.menu_id == Id && d.menu_sub_id == SubId){
@@ -387,7 +463,7 @@ export default function CustomerViewIndex() {
 
         let res = updatedMenu.filter(data=> data.name == name)
         setSelectItemData(res)
-        setMenuData(updatedMenu);
+        setMenuData(searchData.length > 0 ? res : updatedMenu);
   
       setOrderList(prev =>
         prev
@@ -399,13 +475,28 @@ export default function CustomerViewIndex() {
           .filter(item => item.count > 0) 
       );
 
-      setMain(prev => {
-          return prev.map(item =>
-            item.name == selMenu
-              ? { ...item, data: updatedMenu }
-              : item
-          );
-        });
+      let result = updatedMenu.filter(d=> d.name == name && d.menu_id == Id)
+console.log("result",result)
+        setMain(prev =>
+          prev.map(item => {
+            console.log("item",item)
+            if (item.name === result[0].categoryName) {
+              return {
+                ...item,
+                data: item.data.map(d => {
+                  if (d.menu_id === result[0].menu_id && d.name === result[0].name) {
+                    return {
+                      ...d,
+                      count: result[0].count
+                    };
+                  }
+                  return d;
+                })
+              };
+            }
+            return item;
+          })
+        );
     };
 
     const deleteBtn = (SubId,Id,id, name, status) => {
@@ -459,13 +550,27 @@ export default function CustomerViewIndex() {
             .filter(item => item.count > 0) 
         );
 
-        setMain(prev => {
-          return prev.map(item =>
-            item.name == selMenu
-              ? { ...item, data: updatedMenu }
-              : item
-          );
-        });
+        let result = updatedMenu.filter(d=> d.name == name && d.menu_id == Id)
+
+        setMain(prev =>
+          prev.map(item => {
+            if (item.name === result[0].categoryName) {
+              return {
+                ...item,
+                data: item.data.map(d => {
+                  if (d.menu_id === result[0].menu_id && d.name === result[0].name) {
+                    return {
+                      ...d,
+                      meats: result[0].meats
+                    };
+                  }
+                  return d;
+                })
+              };
+            }
+            return item;
+          })
+        );
       };
 
 
@@ -502,7 +607,7 @@ export default function CustomerViewIndex() {
 
             let res = updatedMenu.filter(data=> data.name == name)
             setSelectItemData(res)
-            setMenuData(updatedMenu);
+            setMenuData(searchData.length > 0 ? res : updatedMenu);
       
           setOrderList(prev =>
             prev
@@ -514,14 +619,29 @@ export default function CustomerViewIndex() {
               .filter(item => item.count > 0) 
           );
 
-          setMain(prev => {
-              return prev.map(item =>
-                item.name == selMenu
-                  ? { ...item, data: updatedMenu }
-                  : item
-              );
-            });
+          let result = updatedMenu.filter(d=> d.name == name && d.menu_id == Id)
+
+          setMain(prev =>
+            prev.map(item => {
+              if (item.name === result[0].categoryName) {
+                return {
+                  ...item,
+                  data: item.data.map(d => {
+                    if (d.menu_id === result[0].menu_id && d.name === result[0].name) {
+                      return {
+                        ...d,
+                        meats: result[0].meats
+                      };
+                    }
+                    return d;
+                  })
+                };
+              }
+              return item;
+            })
+          );
         };
+
 
     const totalPrice = orderList.reduce((sum, i) => sum + i.count * i.price, 0);
 
@@ -559,6 +679,32 @@ export default function CustomerViewIndex() {
           } 
         }
       }
+
+      // return type: dish object အပြည့် (original data structure ကို မပြောင်း)
+      function searchDishesByNameOrMeat(resultData, search) {
+        const term = (search ?? "").trim().toLowerCase();
+        if (!term) return [];
+
+        const matches = [];
+
+        for (const category of resultData) {
+          const list = Array.isArray(category.data) ? category.data : [];
+          for (const item of list) {
+            const name = (item.name ?? "").toLowerCase();
+            if (name.includes(term)) {
+              matches.push({
+                categoryId: category.id,
+                categoryName: category.name,
+                ...item,
+              });
+            }
+          }
+        }
+
+        return matches;
+      }
+console.log("Main",main)
+console.log("menuData",menuData)
     
   return (
     <div className="page">
@@ -578,6 +724,11 @@ export default function CustomerViewIndex() {
             cardClick={cardClick}
             menuClick={menuClick}
             basketclick={()=>setPage(3)}
+            search={search}
+            searchChange={(e)=>setSearch(e.target.value)}
+            debouncedSearch={debouncedSearch}
+            searchData={searchData}
+            
        />
     }
 
