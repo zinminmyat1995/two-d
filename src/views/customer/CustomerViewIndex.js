@@ -126,31 +126,6 @@ console.log("menu data",menuData)
     }
   }
 
-   const tempGetData = async () => {
-    const object = { url: ApiPath.CustomerViewGetData, method: 'get' }
-    const response = await ApiRequest(object)
-    if (response.flag === false) {
-      setLoading(false)
-      return
-    }
-    if (response.data.status === 'OK') {
-      const res = response.data.data
-      const arr = res.map(d => ({
-        component: CNavItem,
-        name: d.name,
-        to: `/order/register`,
-      }))
-
-
-      const resp = res.find(item => item.name == selectedMenu)
-      setMenuData(resp ? resp.data : [])
-
-      setMenu(arr)
-      setMain(res)
-      setLoading(false);setShowSuccess(false);setShowRatingSuccess(false);
-    }
-  }
-
   const menuClick = (name) => {
     setSelectedMenu(name)
     const res = main.find(item => item.name === name)
@@ -753,7 +728,11 @@ console.log("menu data",menuData)
             setShowRating(false);setLoading(false);
             setActiveItem(null)
             setSelectedStars(0)
-            setShowRatingSuccess(true);tempGetData();
+            setShowRatingSuccess(true);
+            setTimeout(() => {
+              setShowRatingSuccess(false);
+            }, 2000);
+
           } else {
             setPage(4);setLoading(false);
           }
