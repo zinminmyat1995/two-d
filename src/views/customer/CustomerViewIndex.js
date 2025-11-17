@@ -37,6 +37,12 @@ export default function CustomerViewIndex() {
   const [copyMenuData, setCopyMenuData ] = useState([]);
   const [copySelectMenu, setCopySelectMenu ] = useState("")
 
+  const [showRating, setShowRating] = useState(false)
+  const [activeItem, setActiveItem] = useState(null)
+  const [selectedStars, setSelectedStars] = useState(0)
+  const [showRatingSuccess, setShowRatingSuccess] = useState(false);
+
+
   const account = React.useMemo(
     () => pathname.replace(/\/$/, '').split('/').pop(),
     [pathname]
@@ -74,7 +80,7 @@ export default function CustomerViewIndex() {
   console.log("search data",searchData)
   console.log("debouncedSearch",debouncedSearch)
 
-
+console.log("menu data",menuData)
   let checkAcc =async ()=>{
     setLoading(true);
     let object = {
@@ -117,6 +123,31 @@ export default function CustomerViewIndex() {
       setMain(res)
       setMenuData(res[0]?.data || [])
       setLoading(false);setShowSuccess(false)
+    }
+  }
+
+   const tempGetData = async () => {
+    const object = { url: ApiPath.CustomerViewGetData, method: 'get' }
+    const response = await ApiRequest(object)
+    if (response.flag === false) {
+      setLoading(false)
+      return
+    }
+    if (response.data.status === 'OK') {
+      const res = response.data.data
+      const arr = res.map(d => ({
+        component: CNavItem,
+        name: d.name,
+        to: `/order/register`,
+      }))
+
+
+      const resp = res.find(item => item.name == selectedMenu)
+      setMenuData(resp ? resp.data : [])
+
+      setMenu(arr)
+      setMain(res)
+      setLoading(false);setShowSuccess(false);setShowRatingSuccess(false);
     }
   }
 
@@ -227,11 +258,11 @@ export default function CustomerViewIndex() {
           }
         });
         let result = updatedMenu.filter(d=> d.name == name && d.menu_id == Id)
-        console.log("RES",result)
+
 
         setMain(prev =>
           prev.map(item => {
-            console.log("item",item)
+
             if (item.name === result[0].categoryName) {
               return {
                 ...item,
@@ -269,11 +300,10 @@ export default function CustomerViewIndex() {
             } 
           });
       }else{
-        let filterData = main.find((menu) => menu.id === Id)?.data || [];
         let n = main.find((menu) => menu.id === Id)?.name || [];
         selMenu = n;
         
-        updatedMenu = filterData.map(d => {
+        updatedMenu = menuData.map(d => {
             if (d.menu_id == Id && d.menu_sub_id == SubId){
               return {
                 ...d,
@@ -285,12 +315,12 @@ export default function CustomerViewIndex() {
             } 
           });
       }
-      console.log("NAME",name)
 
 
         let res = updatedMenu.filter(data=> data.name == name)
         setSelectItemData(res)
-        setMenuData(searchData.length > 0 ? res : updatedMenu);
+
+        setMenuData(updatedMenu);
    
         let selected;
 
@@ -406,11 +436,11 @@ export default function CustomerViewIndex() {
         );
 
         let result = updatedMenu.filter(d=> d.name == name && d.menu_id == Id)
-console.log("result",result)
+
 
         setMain(prev =>
           prev.map(item => {
-            console.log("item",item)
+
             if (item.name === result[0].categoryName) {
               return {
                 ...item,
@@ -445,11 +475,11 @@ console.log("result",result)
           }   
         });
     }else{
-      let filterData = main.find((menu) => menu.id === Id)?.data || [];
+  
       let n = main.find((menu) => menu.id === Id)?.name || [];
       selMenu = n;
 
-       updatedMenu = filterData.map(d => {
+       updatedMenu = menuData.map(d => {
           if (d.menu_id == Id && d.menu_sub_id == SubId){
             return {
               ...d,
@@ -463,7 +493,7 @@ console.log("result",result)
 
         let res = updatedMenu.filter(data=> data.name == name)
         setSelectItemData(res)
-        setMenuData(searchData.length > 0 ? res : updatedMenu);
+        setMenuData(updatedMenu);
   
       setOrderList(prev =>
         prev
@@ -476,10 +506,10 @@ console.log("result",result)
       );
 
       let result = updatedMenu.filter(d=> d.name == name && d.menu_id == Id)
-console.log("result",result)
+
         setMain(prev =>
           prev.map(item => {
-            console.log("item",item)
+        
             if (item.name === result[0].categoryName) {
               return {
                 ...item,
@@ -517,10 +547,9 @@ console.log("result",result)
             };
           });
     }else{
-      let filterData = main.find((menu) => menu.id === Id)?.data || [];
       let name = main.find((menu) => menu.id === Id)?.name || [];
       selMenu = name;
-        updatedMenu = filterData.map(d => {
+        updatedMenu = menuData.map(d => {
             if (d.menu_id !== Id) return d;
     
             // menu ထဲမှာ meats update
@@ -589,11 +618,11 @@ console.log("result",result)
               }   
             });
         }else{
-          let filterData = main.find((menu) => menu.id === Id)?.data || [];
+         
           let name = main.find((menu) => menu.id === Id)?.name || [];
           selMenu = name;
 
-          updatedMenu = filterData.map(d => {
+          updatedMenu = menuData.map(d => {
               if (d.menu_id == Id && d.menu_sub_id == SubId){
                 return {
                   ...d,
@@ -607,7 +636,7 @@ console.log("result",result)
 
             let res = updatedMenu.filter(data=> data.name == name)
             setSelectItemData(res)
-            setMenuData(searchData.length > 0 ? res : updatedMenu);
+            setMenuData(updatedMenu);
       
           setOrderList(prev =>
             prev
@@ -703,12 +732,54 @@ console.log("result",result)
 
         return matches;
       }
-console.log("Main",main)
-console.log("menuData",menuData)
-    
+
+    const closeRating =async () => {
+      if(selectedStars > 0){
+        setLoading(true);
+        let object = {
+          url: ApiPath.CustomerViewRating,
+          method: 'post',
+          params: {
+            "rate": selectedStars,
+            "id": activeItem.menu_sub_id
+          }
+        }
+      
+        let response = await ApiRequest(object);
+        if (response.flag === false) {
+            setPage(4);setLoading(false);
+        } else {
+          if (response.data.status === 'OK') {
+            setShowRating(false);setLoading(false);
+            setActiveItem(null)
+            setSelectedStars(0)
+            setShowRatingSuccess(true);tempGetData();
+          } else {
+            setPage(4);setLoading(false);
+          }
+        }
+
+      }else{
+        setShowRating(false);
+      }
+    }
+
+    const openRating = (item) => {
+      setActiveItem(item)
+      setSelectedStars(0)
+      setShowRating(true)
+    }
+
+    const handleStarClick = (value) => {
+      setSelectedStars(value)
+      
+    }
+
+    console.log("STAR",activeItem)
   return (
     <div className="page">
       <Loading start={loading} />
+      
       <ConfirmModal
           showConfirm={showConfirm}
           onOk={() =>saveOK()}
@@ -728,6 +799,15 @@ console.log("menuData",menuData)
             searchChange={(e)=>setSearch(e.target.value)}
             debouncedSearch={debouncedSearch}
             searchData={searchData}
+            closeRating={closeRating}
+            showRating={showRating}    
+            setShowRating={()=>setShowRating(true)} 
+            activeItem={activeItem}
+            setActiveItem={()=>setActiveItem(item)}
+            selectedStars={selectedStars}
+            openRating={openRating}
+            handleStarClick={handleStarClick}
+            showRatingSuccess={showRatingSuccess}
             
        />
     }

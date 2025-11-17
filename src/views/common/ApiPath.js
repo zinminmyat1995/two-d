@@ -50,7 +50,8 @@ export default {
     
     CustomerViewAccCheck: `customer-view/check-acc`,
     CustomerViewGetData: `customer-view/menu-data`,
-    CustomerViewOrderRegister: `customer-view/order/register`
+    CustomerViewOrderRegister: `customer-view/order/register`,
+    CustomerViewRating: `customer-view/menu/rating`
     
    
 };

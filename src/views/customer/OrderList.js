@@ -54,7 +54,7 @@ export default function OrderList({ back, orderList = [], tableNo,totalPrice, pl
           <>
             <div className="cv-list cv-has-footer">
               {orderList.map((it, idx) => (
-                <div className="cv-item" key={it.id || idx}>
+                <div className="cv-item" key={idx}>
                   <img className="cv-img" src={product.img} alt={product.name} />
                   <div className="cv-body">
                     <div className="cv-name">{it.name}</div>
