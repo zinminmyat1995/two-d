@@ -1,5 +1,5 @@
 // If you want to override variables do it here
-@import "variables";
+@import "_variables";
 
 // Import styles
 @import "@coreui/coreui/scss/coreui";
@@ -9,7 +9,7 @@
 @import "vendors/simplebar";
 
 // Custom styles for this theme
-@import "theme";
+@import "_theme";
 
 // If you want to add custom CSS you can put it here
-@import "custom";
+@import "_custom";

@@ -709,7 +709,7 @@ console.log("menu data",menuData)
       }
 
     const closeRating =async (status) => {
-      if(status == ""){
+      if(status == "btn"){
         if(selectedStars > 0){
           setLoading(true);
           let object = {

@@ -125,7 +125,7 @@ export default function MenuCard({
       {/* ⭐ Slide-up rating card */}
       {showRating && (
         <div className="rating-overlay" role="dialog" aria-modal="true">
-          <div className="rating-backdrop" onClick={closeRating} />
+          <div className="rating-backdrop" onClick={()=>closeRating("cls")} />
           <div className="rating-sheet">
             <div className="rating-handle" />
             <div className="rating-header">
