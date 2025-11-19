@@ -51,9 +51,9 @@ const RegistrationIndex = () => {
  	const [addMeatType, setAddMeatType ] = useState("");
 	const [meatTypeData, setMeatTypeData ] = useState([]);
 	const [removeMeatID , setRemoveMeatID ] = useState("");
-	const [optionRequired, setOptionRequired ] = useState("1");
+	const [optionRequired, setOptionRequired ] = useState("0");
 	const [price, setPrice ] = useState("")
-
+	const [imageFile, setImageFile] = useState(null);
 
 	useEffect(() => {
 		(async () => {
@@ -240,19 +240,22 @@ const RegistrationIndex = () => {
 				}
 			})
 			
+ 		const formData = new FormData();
+		formData.append("menu_id", code);
+		formData.append("menu_name", name);
+		formData.append("menu_type", menuType);
+		formData.append("price", price);
+		formData.append("meat_and_price", arr);
+		formData.append("login_id", loginID);
 
+		if (imageFile) {
+			formData.append("image", imageFile);
+		}
 			let obj = {
 				method: "post",
 				url: ApiPath.MenuRegister,
-				params: {
-					"menu_id": code,
-					"menu_name": name,
-					"price": price,
-					"menu_type": menuType,
-					"meat_and_price": arr,
-					"login_id": loginID,
-				},
-			  };
+				data: formData, 
+			};
 			  let response = await ApiRequest(obj);
 			  
 			  if (response.flag === false) {
@@ -410,6 +413,10 @@ const RegistrationIndex = () => {
 			str.push("Please select menu type!")
 		}
 		
+		if (imageFile == null || imageFile == "") {
+			str.push("Please upload image!")
+		}
+		
 		if(optionRequired == "1"){
 		
 			if(meatTypeData.length > 0){
@@ -435,6 +442,62 @@ const RegistrationIndex = () => {
 			setShow(true);setContent("Are you sure want to save?");
 			}
 	}
+
+	const handleImageChange = async (e) => {
+		const file = e.target.files[0];
+
+		if (!file){
+			setImageFile(null);
+			return;
+		}
+
+		try {
+			const result = await validateImage(file);
+			setImageFile(file);
+			console.log(result);
+		} catch (err) {
+			alert(err);
+			e.target.value = ""; // reset file input
+		}
+	};
+
+	const validateImage = (file) => {
+		return new Promise((resolve, reject) => {
+			// 1. Size check (3MB max)
+			const maxSize = 1 * 1024 * 1024; // 1MB
+
+			if (file.size > maxSize) {
+			reject("Image size must be less than 1MB!");
+			return;
+			}
+
+			// 2. Resolution check
+			const img = new Image();
+			img.src = URL.createObjectURL(file);
+
+			img.onload = () => {
+			const width = img.width;
+			const height = img.height;
+
+			// Minimum resolution (300x300)
+			if (width < 300 || height < 300) {
+				reject("Image resolution must be at least 300x300!");
+				return;
+			}
+
+			// Recommended resolution (not required but safe)
+			if (width > 2000 || height > 2000) {
+				reject("Image resolution too large! Try smaller resolution.");
+				return;
+			}
+
+			resolve("OK");
+			};
+
+			img.onerror = () => reject("Invalid image file!");
+		});
+		};
+
 	
   return (
 	<CRow>
@@ -539,6 +602,21 @@ const RegistrationIndex = () => {
 						   <CIcon icon={cilPlus} className="plus-button" style={{marginLeft: "10px", marginRight: "10px"}} onClick={()=>plusModalShowFun()}  /> 
 						   <CIcon icon={cilMinus} className="plus-button" onClick={()=>minusModalShowFun()}   />
 						</div>
+					</CCol>
+					<CCol lg="4"></CCol>
+				</CRow>
+
+				<CRow className="mt-2">
+					<CCol lg="2"></CCol>
+					<CCol lg="2" className="text-align-center">
+							<p className="label">Upload Image</p>
+					</CCol>
+					<CCol lg="4">
+						<CFormInput
+								type="file"
+								accept="image/*"
+								onChange={handleImageChange}
+							/>
 					</CCol>
 					<CCol lg="4"></CCol>
 				</CRow>

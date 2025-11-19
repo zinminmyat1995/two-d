@@ -48,6 +48,7 @@ const DailyMenuIndex  = () => {
     const [ deletedID, setDeletedID ] = useState("")
     const [active, setActive] = useState(2)
     const [allCheck, setAllCheck ] = useState(false)
+    const [imageFile, setImageFile] = useState(null);
 
     useEffect(() => {
         (async () => {
@@ -125,6 +126,10 @@ const DailyMenuIndex  = () => {
         if (price == "") {
             str.push("Please fill price!")
         }
+
+        if (imageFile == null || imageFile == "") {
+			str.push("Please upload image!")
+		}
     
         if (str.length > 0) {
             setError(str);
@@ -138,9 +143,22 @@ const DailyMenuIndex  = () => {
 
     let saveOK = async()=>{
         setError([]);setSuccess([]);setShow(false);setLoading(true);
+
+
+        const formData = new FormData();
+        formData.append("dish_type", isMain == true? 1 : 0);
+        formData.append("menu_name", name);
+        formData.append("price", price);
+        formData.append("login_id", loginID);
+
+        if (imageFile) {
+            formData.append("image", imageFile);
+        }
+           
         let obj = {
             method: "post",
             url: ApiPath.DailyMenuRegister,
+            data: formData, 
             params: {
                 "dish_type": isMain == true? 1 : 0,
                 "menu_name": name,
@@ -415,8 +433,61 @@ const DailyMenuIndex  = () => {
     }
 
 
+    const handleImageChange = async (e) => {
+		const file = e.target.files[0];
+
+		if (!file){
+			setImageFile(null);
+			return;
+		}
+
+		try {
+			const result = await validateImage(file);
+			setImageFile(file);
+			console.log(result);
+		} catch (err) {
+			alert(err);
+			e.target.value = ""; // reset file input
+		}
+	};
     
-    
+    const validateImage = (file) => {
+		return new Promise((resolve, reject) => {
+			// 1. Size check (3MB max)
+			const maxSize = 1 * 1024 * 1024; // 1MB
+
+			if (file.size > maxSize) {
+			reject("Image size must be less than 1MB!");
+			return;
+			}
+
+			// 2. Resolution check
+			const img = new Image();
+			img.src = URL.createObjectURL(file);
+
+			img.onload = () => {
+			const width = img.width;
+			const height = img.height;
+
+			// Minimum resolution (300x300)
+			if (width < 300 || height < 300) {
+				reject("Image resolution must be at least 300x300!");
+				return;
+			}
+
+			// Recommended resolution (not required but safe)
+			if (width > 2000 || height > 2000) {
+				reject("Image resolution too large! Try smaller resolution.");
+				return;
+			}
+
+			resolve("OK");
+			};
+
+			img.onerror = () => reject("Invalid image file!");
+		});
+	};
+
   return (
       <CRow>
       <CCol>
@@ -491,7 +562,7 @@ const DailyMenuIndex  = () => {
                             <p className="label">Dish Type</p>
                     </CCol>
                
-                        <CCol lg="4" className="d-flex align-items-center justify-content-start">
+                        <CCol lg="4" className="d-flex  justify-content-start">
                             {/* Left label */}
                             <span style={{ marginRight: '10px', fontWeight: '600', color: isMain ? '#6c757d' : '#198754' }}>
                                 Side Dish
@@ -513,11 +584,29 @@ const DailyMenuIndex  = () => {
                         </CCol>
                     <CCol lg="4"></CCol>
                 </CRow>
+
+                 <CRow className="mt-3">
+                    <CCol lg="2"></CCol>
+                    <CCol lg="2" className="text-align-center">
+                            <p className="label">Upload Image</p>
+                    </CCol>
+                    <CCol lg="4">
+                        <CFormInput
+                                type="file"
+                                accept="image/*"
+                                onChange={handleImageChange}
+                            />
+                    </CCol>
+                    <CCol lg="4"></CCol>
+                </CRow>
+
                 <CRow className="mt-5 mb-5 text-align-center">
                     <CCol>
                         <CButton className="login-button" style={{ width: "100px" }} onClick={() => saveClick()}>Save</CButton>
                     </CCol>
                 </CRow>
+
+               
                 
                 {menuList.length > 0 && (
                    <CRow className="mt-3">

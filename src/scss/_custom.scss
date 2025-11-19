@@ -12,22 +12,23 @@
 }
 .table tbody tr td {
 	word-break: break-word;
+	align-content: center;
 }
-td:first-child, th:first-child {
-	position:sticky;
-	left:0;
-	z-index:1;
-}
-td:nth-child(2),th:nth-child(2)  { 
-  position:sticky;
-	left:60px;
-	z-index:1;
-}
-td:nth-child(3),th:nth-child(3)  { 
-	position:sticky;
-	  left:210px;
-	  z-index:1;
-}
+// td:first-child, th:first-child {
+// 	position:sticky;
+// 	left:0;
+// 	z-index:1;
+// }
+// td:nth-child(2),th:nth-child(2)  { 
+//   position:sticky;
+// 	left:60px;
+// 	z-index:1;
+// }
+// td:nth-child(3),th:nth-child(3)  { 
+// 	position:sticky;
+// 	  left:210px;
+// 	  z-index:1;
+// }
 // Here you can add other styles
 .text-align-center{
 	text-align: center;
@@ -201,7 +202,7 @@ td:nth-child(3),th:nth-child(3)  {
 }
 
 .menu-list-table{
-	max-width: 1120px;
+	max-width: 1130px;
 	min-width: 100% !important;
 }
 .billing-list-table{

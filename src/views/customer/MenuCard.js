@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { cilBasket } from '@coreui/icons'
-import { ShoppingCart, Star } from "lucide-react";
+import { ShoppingCart, Star,ScrollText ,Image } from "lucide-react";
 import CIcon from '@coreui/icons-react'
 import EmptySearch from "./EmptySearch"
 
@@ -23,9 +23,12 @@ export default function MenuCard({
   selectedStars,
   openRating,
   handleStarClick,
-  showRatingSuccess
+  showRatingSuccess,
+  listBtn,
+  url
 }) {
-
+ 
+ 
 
   return (
     <>
@@ -39,6 +42,9 @@ export default function MenuCard({
       <header className="top">
         <div className="bar">
           <div className="brand">The<span>Six</span></div>
+          <div className="avatar" style={{position: "absolute",right: "50px"}}>
+            <ScrollText  size={30} color="#ff4b47" strokeWidth={2} onClick={listBtn} />
+          </div>
           <div className="avatar">
             <ShoppingCart size={30} color="#ff4b47" strokeWidth={2} onClick={basketclick} />
           </div>
@@ -85,10 +91,17 @@ export default function MenuCard({
                 <article key={i} className="card burger-card">
                   {/* top image (small, centered, soft bg) */}
                   <div className="thumb" onClick={() => cardClick(it.name, it.meats)}>
-                    <img
-                      src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=600&auto=format&fit=crop"
-                      alt={it.name}
-                    />
+                    {it.image == null ? 
+                      <div className="thumb-placeholder">
+                      <Image />
+                    </div>
+                    :
+                      <img
+                        src={`${url}/${it.image}`}
+                        alt={it.name}
+                      />
+                    }
+                    
 
                     {/* Rating trigger button (old heart position) */}
                    <button
@@ -258,8 +271,24 @@ export default function MenuCard({
           box-shadow:var(--shadow);
           height:100%;
         }
-        .thumb{position:relative; aspect-ratio:4/2; width:100%; overflow:hidden; cursor:pointer;}
-        .thumb img{width:100%; height:100%; object-fit:cover}
+        .thumb {
+          position: relative;
+          aspect-ratio: 4 / 2;
+          width: 100%;
+          overflow: hidden;
+          border-radius: 12px;
+          background: #f6f6f6; /* optional */
+        }
+
+        /* For normal image */
+        .thumb img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center;
+          display: block;
+        }
+
 
         .meta{
           display:grid;
@@ -407,6 +436,29 @@ export default function MenuCard({
           cursor:not-allowed;
         }
 
+        /* Placeholder wrapper */
+        .thumb-placeholder {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          width: 50%;     /* adjust icon container size */
+          height: 50%;    /* adjust icon container size */
+
+          opacity: 0.5;   /* slightly soft */
+        }
+
+        /* Optional: icon size inside placeholder */
+        .thumb-placeholder svg {
+          width: 60px !important;
+          height: 60px !important;
+          color: #bfbfbf;
+        }
         /* Responsive tuning */
         @media (max-width:480px){
           :root{ --card-min: 170px; --top-h: 210px; }

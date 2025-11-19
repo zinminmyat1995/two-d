@@ -26,7 +26,7 @@ export const ApiRequest = async (value) => {
     parameter = {
       method: value.method,
       url: value.url,
-      data: value.params,
+      data: value.data || value.params || null,   // <-- IMPORTANT
       responseType: responseType || undefined,
       headers: value.headers,
     };

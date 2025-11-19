@@ -11,6 +11,7 @@ export default {
     MenuSearch: `menu/search`,
     MenuUpdate: `menu/update`,
     MenuDelete: `menu/delete`,
+    MenuImageUpload: `menu/image-upload`,
     DailyMenuRegister: `daily-menu/save`,
     DailyMenuSearch: `daily-menu/search`,
     DailyMenuUpdate: `daily-menu/update`,
@@ -51,7 +52,9 @@ export default {
     CustomerViewAccCheck: `customer-view/check-acc`,
     CustomerViewGetData: `customer-view/menu-data`,
     CustomerViewOrderRegister: `customer-view/order/register`,
-    CustomerViewRating: `customer-view/menu/rating`
+    CustomerViewRating: `customer-view/menu/rating`,
+    CustomerViewOrderConfirm: `customer-view/order/confirm`,
+    
     
    
 };

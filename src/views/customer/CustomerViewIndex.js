@@ -12,7 +12,12 @@ import { CNavItem } from '@coreui/react'
 import OrderList from './OrderList';
 import { Base64 } from "js-base64";
 import NotFound from './NotFound';
+import ConfirmList from './ConfirmList'
+import Key from '../common/CommonKey'
 export default function CustomerViewIndex() {
+
+  const url = Key.IMAGE_URL;
+
   const { pathname } = useLocation()
   const [loading, setLoading] = useState(false)
   const [showError, setShowError] = useState(false)
@@ -23,7 +28,6 @@ export default function CustomerViewIndex() {
   const [successText2, setSuccessText2] = useState("")
   const [selectedMenu, setSelectedMenu] = useState("")
   const [main, setMain] = useState([])
-  const [menu, setMenu] = useState([])
   const [menuData, setMenuData] = useState([])
   const [page, setPage ] = useState(0)
   const [selectItemData, setSelectItemData ] = useState([]);
@@ -41,7 +45,11 @@ export default function CustomerViewIndex() {
   const [activeItem, setActiveItem] = useState(null)
   const [selectedStars, setSelectedStars] = useState(0)
   const [showRatingSuccess, setShowRatingSuccess] = useState(false);
-
+  const [selectedMenu1, setSelectedMenu1] = useState("")
+  const [main1, setMain1] = useState([])
+  const [menuData1, setMenuData1] = useState([])
+  const [confirmListShow, setConfirmListShow ] = useState(false)
+  const [confirmListData, setConfirmListData ] = useState([])
 
   const account = React.useMemo(
     () => pathname.replace(/\/$/, '').split('/').pop(),
@@ -118,11 +126,10 @@ console.log("menu data",menuData)
         name: d.name,
         to: `/order/register`,
       }))
-      setMenu(arr)
-      setSelectedMenu(res[0]?.name || '')
-      setMain(res)
-      setMenuData(res[0]?.data || [])
-      setLoading(false);setShowSuccess(false)
+      setSelectedMenu(res[0]?.name || '');setSelectedMenu1(res[0]?.name || '');
+      setMain(res);setMain1(res)
+      setMenuData(res[0]?.data || []);setMenuData1(res[0]?.data || []);
+      setLoading(false);
     }
   }
 
@@ -672,10 +679,10 @@ console.log("menu data",menuData)
           setErrorText1("Fail to save!");setTimeout(() => setShowError(false), 2000)
         } else {
           if (response.data.status == "OK") {
-            setLoading(false)
+            setLoading(false);setSelectedMenu(selectedMenu1);setMain(main1);setMenuData(menuData1);
             setShowSuccess(true)
             setSuccessText2([response.data.message]);
-            setSuccessText1("Success!");setOrderList([]);getData();setPage(1);
+            setSuccessText1("Success!");setOrderList([]);setPage(1);setTimeout(() => setShowSuccess(false), 3000)
             window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
           }else{
               setErrorText1("Fail to save!");setShowError(true);setErrorText2([response.data.message]);setLoading(false);
@@ -759,6 +766,30 @@ console.log("menu data",menuData)
       
     }
 
+    let listBtn = async () =>{
+        setLoading(true);
+        let object = {
+          url: ApiPath.CustomerViewOrderConfirm,
+          method: 'get',
+          params: {
+            "table_id": tableID
+          }
+        }
+      
+        let response = await ApiRequest(object);
+        if (response.flag === false) {
+            setPage(5);setLoading(false);setConfirmListData([]);
+        } else {
+          if (response.data.status === 'OK') {
+            setConfirmListData(response.data.order_list);
+            setPage(5);setLoading(false);
+          } else {
+            setPage(4);setLoading(false);
+          }
+        }
+
+    }
+
     console.log("STAR",activeItem)
   return (
     <div className="page">
@@ -792,6 +823,8 @@ console.log("menu data",menuData)
             openRating={openRating}
             handleStarClick={handleStarClick}
             showRatingSuccess={showRatingSuccess}
+            listBtn={listBtn}
+            url={url}
             
        />
     }
@@ -829,6 +862,15 @@ console.log("menu data",menuData)
     }
     {page == 4 &&
       <NotFound  />
+    }
+
+    {page == 5 &&
+        <ConfirmList  
+          back={()=>setPage(1)}
+          confirmListData={confirmListData}
+          tableNo={tableNo}
+          url={url}
+        />
     }
 
     </div>

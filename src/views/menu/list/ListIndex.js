@@ -1,26 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef  } from "react";
 import {
     CAvatar,
     CButton,
     CFormSelect,
-
     CCol,
-
     CRow,
-
     CFormInput
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import Confirmation from "../../common/Confirmation";
 import {validateIntegerOnly} from "../../common/CommonValidation"
 import Message from "../../common/SuccessError";
-import {
-    cilTrash,
-    cilPencil,
-    cilCheckAlt,
-    cilMinus,
-    cilClipboard
-} from '@coreui/icons'
+import { Image as ImageIcon } from "lucide-react";
 import Loading from "../../common/Loading"
 import ApiPath from "../../common/ApiPath";
 import { ApiRequest } from "../../common/ApiRequest";
@@ -28,8 +19,10 @@ import deleteImg from '../../../assets/images/delete.png';
 import updateImg from '../../../assets/images/update.png';
 import editImg from '../../../assets/images/edit.png';
 import noDataImg from '../../../assets/images/no-data.png';
+import Key from '../../common/CommonKey'
 
 const ListIndex = () => {
+    const url = Key.IMAGE_URL;
     const [error, setError] = useState([]); // for error message
     const [success, setSuccess] = useState([]); // for success message
     const [name, setName] = useState("");
@@ -45,7 +38,8 @@ const ListIndex = () => {
     const [type, setType] = useState("save"); //
     const [loading, setLoading] = useState(false);  // for loading
     const [loginID , setLoginID ] = useState(localStorage.getItem('LOGIN_ID'));
-
+    const [imageFile, setImageFile] = useState(null);
+    const [currentItem, setCurrentItem] = useState(null);
     
 
     useEffect(() => {
@@ -287,6 +281,100 @@ const ListIndex = () => {
         setUserData(res);
     }
 
+    const fileRef = useRef(null);
+
+    const handleThumbClick = (item) => {
+        setCurrentItem(item);
+        fileRef.current.value = "";     
+        fileRef.current.click();        // 👉 file chooser open
+    };
+
+ 
+    console.log(imageFile);
+
+    const handleImageChange = async (e) => {
+		const file = e.target.files[0];
+
+		if (!file){
+			setImageFile(null);
+			return;
+		}
+
+		try {
+			const result = await validateImage(file);
+			uploadFun(file);
+			
+		} catch (err) {
+			alert(err);
+			e.target.value = ""; // reset file input
+		}
+	};
+
+
+    let uploadFun =async (file)=>{
+        setError([]);setSuccess([]);setLoading(true);setShow(false);
+        const formData = new FormData();
+        formData.append("id", currentItem['id']);
+        formData.append("login_id", loginID);
+    
+        if (file) {
+            formData.append("image", file);
+        }
+
+            let obj = {
+                method: "post",
+                url: ApiPath.MenuImageUpload,
+                data: formData, 
+            };
+        let response = await ApiRequest(obj);
+        if (response.flag === false) {
+            setError([response.message[0]]); setSuccess([]);
+            window.scrollTo({ top: 0, left: 0, behavior: "smooth" });setLoading(false);
+        } else {
+            if (response.data.status == "OK") {
+                setSuccess([response.data.message]);setError([]);tempSearchClick();
+                window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+            }else{
+                setError([response.data.message]);setSuccess([]);setLoading(false);
+                window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+            } 
+        }
+    }
+
+    
+    const validateImage = (file) => {
+        return new Promise((resolve, reject) => {
+            const maxSize = 1 * 1024 * 1024; // 1MB
+
+            if (file.size > maxSize) {
+            reject("Image size must be less than 1MB!");
+            return;
+            }
+
+            // ❗ use window.Image instead of Image
+            const img = new window.Image();
+            img.src = URL.createObjectURL(file);
+
+            img.onload = () => {
+            const width = img.width;
+            const height = img.height;
+
+            if (width < 300 || height < 300) {
+                reject("Image resolution must be at least 300x300!");
+                return;
+            }
+
+            if (width > 2000 || height > 2000) {
+                reject("Image resolution too large! Try smaller resolution.");
+                return;
+            }
+
+            resolve("OK");
+            };
+
+            img.onerror = () => reject("Invalid image file!");
+        });
+        };
 
     return (
         <>
@@ -336,6 +424,13 @@ const ListIndex = () => {
             </CRow>
 
           
+            <input
+                type="file"
+                ref={fileRef}
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={handleImageChange}
+            />
 
             {userData.length > 0 ?(
                 <>
@@ -351,10 +446,11 @@ const ListIndex = () => {
                                     <thead className="text-center">
                                         <tr>
                                             <th className="bg-body-tertiary" style={{verticalAlign: "middle"}} width="60px" >No</th>
-                                            <th className="bg-body-tertiary" style={{verticalAlign: "middle"}} width="260px">Menu Category</th>
+                                            <th className="bg-body-tertiary" style={{verticalAlign: "middle"}} width="100px" >Image</th>
+                                            <th className="bg-body-tertiary" style={{verticalAlign: "middle"}} width="230px">Menu Category</th>
                                             <th className="bg-body-tertiary" style={{verticalAlign: "middle"}} width="260px">Menu Name</th>
-                                            <th className="bg-body-tertiary" style={{verticalAlign: "middle"}} width="230px">Meat</th>
-                                            <th className="bg-body-tertiary" style={{verticalAlign: "middle"}} width="210px">Price</th>
+                                            <th className="bg-body-tertiary" style={{verticalAlign: "middle"}} width="200px">Meat</th>
+                                            <th className="bg-body-tertiary" style={{verticalAlign: "middle"}} width="180px">Price</th>
                                             <th className="bg-body-tertiary text-center" colSpan={2} style={{verticalAlign: "middle"}} width="100px">Action</th>
                                         </tr>
                                     </thead>
@@ -367,6 +463,23 @@ const ListIndex = () => {
                                             onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
                                         >
                                             <td>{index + 1}</td>
+                                            <td>
+                                                <div className="cv-thumb" onClick={() => handleThumbClick(item)}>
+                                                    {item.image_path == null ? (
+                                                    <div className="cv-thumb-placeholder">
+                                                        <ImageIcon />
+                                                    </div>
+                                                    ) : (
+                                                    <img
+                                                        className="cv-thumb-img"
+                                                        src={`${url}/${item.image_path}`}
+                                                        alt={item.menu_name}
+                                                    />
+                                                    )}
+                                                    
+                                                </div>
+                                            </td>
+
                                             <td>{item.menu_type_name}</td>
                                             <td>
                                                 {item.edit_flag == true ?
@@ -460,6 +573,54 @@ const ListIndex = () => {
                                 </p>
                             </div>
                 )}
+
+                <style>{`
+                     /* Each row: [IMAGE] [TEXT] [PRICE] */
+                        .cv-item{
+                        display:grid;
+                        grid-template-columns: 64px 1fr auto;
+                        gap:12px;
+                        align-items:center;
+                        background:#fff;
+                        border-radius:14px;
+                        border:1px solid #f1eef2;
+                        box-shadow:0 1px 2px rgba(0,0,0,.03);
+                        padding:10px;
+                        }
+
+                        /* LEFT: thumbnail */
+                        .cv-thumb{
+                        width:54px;
+                        height:54px;
+                        border-radius:12px;
+                        overflow:hidden;
+                        background:#f5f5f5;
+                        position:relative;
+                        flex-shrink:0;
+                        margin: auto;
+                        }
+                        .cv-thumb-img{
+                        width:100%;
+                        height:100%;
+                        object-fit:cover;
+                        object-position:center;
+                        display:block;
+                        }
+                         /* Placeholder center */
+                        .cv-thumb-placeholder{
+                        position:absolute;
+                        inset:0;
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+                        opacity:0.6;
+                        }
+                        .cv-thumb-placeholder svg{
+                        width:26px;
+                        height:26px;
+                        color:#9ca3af;
+                        }
+                `}</style>
 
         </>
     )
